@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack"
 
 import ProductContainer from "../Screens/Product/ProductContainer";
 import SingleProduct from "../Screens/Product/SingleProduct"
+import SingleCategory from "../Screens/Product/SingleCategory"
 const Stack = createStackNavigator()
 function MyStack() {
     return (
@@ -17,6 +18,14 @@ function MyStack() {
             <Stack.Screen 
                 name='Product Detail'
                 component={SingleProduct}
+                // options={{
+                //     headerShown: false,
+                // }}
+            />
+
+            <Stack.Screen 
+                name='Category Detail'
+                component={SingleCategory}
                 // options={{
                 //     headerShown: false,
                 // }}
