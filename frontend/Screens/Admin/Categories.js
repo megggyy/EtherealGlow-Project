@@ -1,76 +1,54 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useCallback } from "react";
 import {
     View,
     Text,
     FlatList,
+    ActivityIndicator,
+    StyleSheet,
     Dimensions,
-    TextInput,
-    StyleSheet
-} from "react-native"
-import EasyButton from "../../Shared/StyledComponents/EasyButton"
-import baseURL from "../../assets/common/baseurl";
-import axios from "axios";
+    RefreshControl,
+
+} from "react-native";
+import { Input, VStack, Heading, Box } from "native-base"
+import Icon from "react-native-vector-icons/FontAwesome"
+import { useFocusEffect } from "@react-navigation/native"
+import { Searchbar } from 'react-native-paper';
+import ListItem from "./ListCategory"
+
+import axios from "axios"
+import baseURL from "../../assets/common/baseurl"
 import AsyncStorage from '@react-native-async-storage/async-storage'
-// import { add } from "react-native-reanimated";
+var { height, width } = Dimensions.get("window")
+import EasyButton from "../../Shared/StyledComponents/EasyButton";
+import { useNavigation } from "@react-navigation/native"
 
-var { width } = Dimensions.get("window")
 
-const Item = (props) => {
-    return (
-        <View style={styles.item}>
-            <Text>{props.item.name}</Text>
-            <EasyButton
-                danger
-                medium
-                onPress={() => props.delete(props.item._id)}
-            >
-                <Text style={{ color: "white", fontWeight: "bold" }}>Delete</Text>
-            </EasyButton>
-        </View>
-    )
-}
+const Categories = (props) => {
 
-const Categories = () => {
-
-    const [categories, setCategories] = useState([]);
-    const [categoryName, setCategoryName] = useState();
+    const [categoryList, setCategoryList] = useState([]);
+    const [categoryFilter, setCategoryFilter] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [token, setToken] = useState();
-
-    useEffect(() => {
-        AsyncStorage.getItem("jwt")
-            .then((res) => {
-                setToken(res);
-            })
-            .catch((error) => console.log(error));
-
-        axios
-            .get(`${baseURL}categories`)
-            .then((res) => setCategories(res.data))
-            .catch((error) => alert("Error  load categories"))
-
-        return () => {
-            setCategories();
-            setToken();
+    const [refreshing, setRefreshing] = useState(false);
+    const navigation = useNavigation()
+    const ListHeader = () => {
+        return (
+            <View style={styles.listHeader}>
+            <View style={styles.headerItem}>
+                <Text style={{ fontWeight: '600' }}>Name</Text>
+            </View>
+        </View>
+        )
+    }
+    const searchCategory = (text) => {
+        if (text === "") {
+            setCategoryFilter(categoryList)
         }
-    }, [])
-
-    const addCategory = () => {
-        const category = {
-            name: categoryName
-        };
-
-        const config = {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            }
-        };
-
-        axios
-            .post(`${baseURL}categories`, category, config)
-            .then((res) => setCategories([...categories, res.data]))
-            .catch((error) => alert("Error  load categories"));
-
-        setCategoryName("");
+        setCategoryFilter(
+            categoryList.filter((i) =>
+                i.name.toLowerCase().includes(text.toLowerCase())
+            )
+        )
     }
 
     const deleteCategory = (id) => {
@@ -83,82 +61,139 @@ const Categories = () => {
         axios
             .delete(`${baseURL}categories/${id}`, config)
             .then((res) => {
-                const newCategories = categories.filter((item) => item.id !== id);
-                setCategories(newCategories);
+                const newCategories = categoryFilter.filter((item) => item.id !== id);
+                setCategoryFilter(newCategories);
             })
             .catch((error) => alert("Error delete categories"));
     }
 
-    return (
-        <View style={{ position: "relative", height: "100%" }}>
-            <View style={{ marginBottom: 60 }}>
-                <FlatList
-                    data={categories}
-                    renderItem={({ item, index }) => (
-                        <Item item={item} index={index} delete={deleteCategory} />
-                    )}
-                    keyExtractor={(item) => item.id}
-                />
-            </View>
-            <View style={styles.bottomBar}>
-                <View>
-                    <Text>Add Category</Text>
-                </View>
-                <View style={{ width: width / 2.5 }}>
-                    <TextInput
-                        value={categoryName}
-                        style={styles.input}
-                        onChangeText={(text) => setCategoryName(text)}
-                    />
-                </View>
-                <View>
-                    <EasyButton
-                        medium
-                        primary
-                        onPress={() => addCategory()}
-                    >
-                        <Text style={{ color: "white", fontWeight: "bold" }}>Submit</Text>
-                    </EasyButton>
-                </View>
-            </View>
-        </View>
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            axios
+                .get(`${baseURL}categories`)
+                .then((res) => {
+                    // console.log(res.data)
+                    setCategoryList(res.data);
+                    setCategoryFilter(res.data);
+                    setLoading(false);
+                })
+            setRefreshing(false);
+        }, 2000);
+    }, []);
+    useFocusEffect(
+        useCallback(
+            () => {
+                // Get Token
+                AsyncStorage.getItem("jwt")
+                    .then((res) => {
+                        setToken(res)
+                    })
+                    .catch((error) => console.log(error))
+                axios
+                    .get(`${baseURL}categories`)
+                    .then((res) => {
+                        console.log(res.data)
+                        setCategoryList(res.data);
+                        setCategoryFilter(res.data);
+                        setLoading(false);
+                    })
+
+                return () => {
+                    setCategoryList();
+                    setCategoryFilter();
+                    setLoading(true);
+                }
+            },
+            [],
+        )
     )
+    return (
+        <Box flex={1}>
+            <View style={styles.buttonContainer}>
+                <EasyButton
+                    secondary
+                    medium
+                    onPress={() => navigation.navigate("Orders")}
+                >
+                    <Icon name="shopping-bag" size={18} color="white" />
+                    <Text style={styles.buttonText}>Orders</Text>
+                </EasyButton>
+                <EasyButton
+                    secondary
+                    medium
+                    onPress={() => navigation.navigate("ProductForm")}
+                >
+                    <Icon name="plus" size={18} color="white" />
+                    <Text style={styles.buttonText}>Products</Text>
+                </EasyButton>
+                <EasyButton
+                    secondary
+                    medium
+                    onPress={() => navigation.navigate("Categories")}
+                >
+                    <Icon name="plus" size={18} color="white" />
+                    <Text style={styles.buttonText}>Categories</Text>
+                </EasyButton>
+            </View>
+            <Searchbar width="80%"
+                placeholder="Search"
+                onChangeText={(text) => searchCategory(text)}
+            //   value={searchQuery}
+            />
+            {loading ? (
+                <View style={styles.spinner}>
+                    <ActivityIndicator size="large" color="red" />
+                </View>
+            ) : (<FlatList
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
+                ListHeaderComponent={ListHeader}
+                data={categoryFilter}
+                renderItem={({ item, index }) => (
+                    <ListItem
+                        item={item}
+                        index={index}
+                        deleteCategory={deleteCategory}
+
+                    />
+                )}
+                keyExtractor={(item) => item.id}
+            />)}
+
+
+        </Box>
+    );
 }
 
 const styles = StyleSheet.create({
-    bottomBar: {
-        backgroundColor: "white",
-        width: width,
-        height: 60,
-        padding: 2,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        position: "absolute",
-        bottom: 0,
-        left: 0
-    },
-    input: {
-        height: 40,
-        borderColor: "gray",
-        borderWidth: 1
-    },
-    item: {
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.2,
-        shadowRadius: 1,
-        elevation: 1,
+    listHeader: {
+        flexDirection: 'row',
         padding: 5,
-        margin: 5,
-        backgroundColor: "white",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        borderRadius: 5
+        backgroundColor: 'gainsboro'
+    },
+    headerItem: {
+        margin: 3,
+        width: width / 6
+    },
+    spinner: {
+        height: height / 2,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    container: {
+        marginBottom: 160,
+        backgroundColor: 'white'
+    },
+    buttonContainer: {
+        margin: 20,
+        alignSelf: 'center',
+        flexDirection: 'row'
+    },
+    buttonText: {
+        marginLeft: 4,
+        color: 'white'
     }
 })
 
