@@ -63,7 +63,7 @@ const Login = (props) => {
                 {/* <Button variant={"ghost"} onPress={() => handleSubmit()}>Login</Button> */}
                 <EasyButton
                     large
-                    primary
+                    loginbutton
                     onPress={() => handleSubmit()}
                 ><Text style={{ color: "white" }}>Login</Text>
                 </EasyButton>
@@ -72,7 +72,7 @@ const Login = (props) => {
                 <Text style={styles.middleText}>Dont' Have an Account yet?</Text>
                 <EasyButton
                     large
-                    secondary
+                    registerbutton
                     onPress={() => navigation.navigate("Register")}
                 ><Text style={{ color: "white" }}>Register</Text>
                 </EasyButton>

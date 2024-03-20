@@ -18,7 +18,8 @@ const styles = StyleSheet.create({
         marginBottom: 400,
         width: width,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        // backgroundColor: '#ff6ea0',
     },
     title: {
         fontSize: 30,

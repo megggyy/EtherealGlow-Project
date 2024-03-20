@@ -29,6 +29,20 @@ const EasyButton = styled.TouchableOpacity`
         `
     }
 
+    ${(props) =>
+        props.loginbutton &&
+        css`
+            background: #ff6ea0;
+        `
+    }
+
+    ${(props) =>
+        props.registerbutton &&
+        css`
+            background: #ff0059;
+        `
+    }
+
     ${(props) => 
         props.large &&
         css`
