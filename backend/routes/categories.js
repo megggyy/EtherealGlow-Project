@@ -24,8 +24,6 @@ router.post('/', async (req, res) => {
     console.log(req)
     let category = new Category({
         name: req.body.name,
-        icon: req.body.icon,
-        color: req.body.color
     })
     category = await category.save();
 
@@ -40,8 +38,6 @@ router.put('/:id', async (req, res) => {
         req.params.id,
         {
             name: req.body.name,
-            icon: req.body.icon || category.icon,
-            color: req.body.color,
         },
         { new: true }
     )
