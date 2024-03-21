@@ -37,6 +37,9 @@ const Categories = (props) => {
             <View style={styles.headerItem}>
                 <Text style={{ fontWeight: '600' }}>Name</Text>
             </View>
+            <View style={styles.headerItem}>
+                <Text style={{ fontWeight: '600' }}>Description</Text>
+            </View>
         </View>
         )
     }

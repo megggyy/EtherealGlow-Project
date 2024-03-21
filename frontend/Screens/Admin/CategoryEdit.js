@@ -18,11 +18,14 @@ const CategoryForm = (props) => {
     const [categoryName, setCategoryName] = useState("");
     const [token, setToken] = useState("");
     const [error, setError] = useState("");
+    const [description, setDescription] = useState('');
+    const [item, setItem] = useState(null);
     const navigation = useNavigation();
 
     useEffect(() => {
         if (props.route.params && props.route.params.item) {
             setCategoryName(props.route.params.item.name);
+            setDescription(props.route.params.item.description);
         }
         AsyncStorage.getItem("jwt")
             .then((res) => {
@@ -33,7 +36,8 @@ const CategoryForm = (props) => {
 
     const editCategory = () => {
         const category = {
-            name: categoryName
+            name: categoryName,
+            description: description
         };
 
         const config = {
@@ -79,6 +83,16 @@ const CategoryForm = (props) => {
                 id="name"
                 value={categoryName}
                 onChangeText={(text) => setCategoryName(text)}
+            />
+            <View style={styles.label}>
+                <Text style={{ textDecorationLine: "underline" }}>Description</Text>
+            </View>
+            <Input
+                placeholder="Description"
+                name="description"
+                id="description"
+                value={description}
+                onChangeText={(text) => setDescription(text)}
             />
             {error ? <Error message={error} /> : null}
             <View style={styles.buttonContainer}>

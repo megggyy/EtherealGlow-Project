@@ -24,6 +24,7 @@ router.post('/', async (req, res) => {
     console.log(req)
     let category = new Category({
         name: req.body.name,
+        description: req.body.description,
     })
     category = await category.save();
 
@@ -38,6 +39,7 @@ router.put('/:id', async (req, res) => {
         req.params.id,
         {
             name: req.body.name,
+            description: req.body.description,
         },
         { new: true }
     )
