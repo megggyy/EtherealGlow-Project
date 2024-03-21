@@ -111,21 +111,29 @@ const Categories = (props) => {
     return (
         <Box flex={1}>
             <View style={styles.buttonContainer}>
-                <EasyButton
+                {/* <EasyButton
                     secondary
                     medium
                     onPress={() => navigation.navigate("Orders")}
                 >
                     <Icon name="shopping-bag" size={18} color="white" />
                     <Text style={styles.buttonText}>Orders</Text>
-                </EasyButton>
+                </EasyButton> */}
                 <EasyButton
                     secondary
                     medium
-                    onPress={() => navigation.navigate("ProductForm")}
+                    onPress={() => navigation.navigate("CategoryForm")}
                 >
                     <Icon name="plus" size={18} color="white" />
-                    <Text style={styles.buttonText}>Products</Text>
+                    <Text style={styles.buttonText}>Category</Text>
+                </EasyButton>
+                {/* <EasyButton
+                    secondary
+                    medium
+                    onPress={() => navigation.navigate("Categories")}
+                >
+                    <Icon name="plus" size={18} color="white" />
+                    <Text style={styles.buttonText}>Categories</Text>
                 </EasyButton>
                 <EasyButton
                     secondary
@@ -134,7 +142,7 @@ const Categories = (props) => {
                 >
                     <Icon name="plus" size={18} color="white" />
                     <Text style={styles.buttonText}>Categories</Text>
-                </EasyButton>
+                </EasyButton> */}
             </View>
             <Searchbar width="80%"
                 placeholder="Search"

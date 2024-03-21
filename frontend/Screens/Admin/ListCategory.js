@@ -58,7 +58,7 @@ const ListItem = ({ item, index, deleteCategory }) => {
                         <EasyButton
                             medium
                             secondary
-                            onPress={() => [navigation.navigate("ProductForm", { item }),
+                            onPress={() => [navigation.navigate("CategoryEdit", { item }),
                             setModalVisible(false)
                             ]}
                             title="Edit"
