@@ -34,6 +34,8 @@ const Categories = (props) => {
     const ListHeader = () => {
         return (
             <View style={styles.listHeader}>
+                 <View style={styles.headerItem}></View>
+                 <View style={styles.headerItem}></View>
             <View style={styles.headerItem}>
                 <Text style={{ fontWeight: '600' }}>Name</Text>
             </View>

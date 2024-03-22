@@ -88,6 +88,14 @@ const ListItem = ({ item, index, deleteCategory }) => {
                     backgroundColor: index % 2 == 0 ? "white" : "gainsboro"
                 }]}
             >
+                  {item.image.map((image, index) => (
+                    <Image
+                        key={index}
+                        source={{ uri: image.url }}
+                        resizeMode="contain"
+                        style={styles.image}
+                    />
+    ))}
                 {/* <Image
                     source={{
                         uri: item.image
@@ -115,7 +123,7 @@ const styles = StyleSheet.create({
     image: {
         borderRadius: 50,
         width: width / 6,
-        height: 20,
+        height: 50,
         margin: 2
     },
     item: {
