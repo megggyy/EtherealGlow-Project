@@ -8,6 +8,14 @@ const SingleProduct = ({ route }) => {
     // console.log(item)
     const [availability, setAvailability] = useState('')
     const [availabilityText, setAvailabilityText] = useState("")
+
+    const getFirstImage = () => {
+        if (Array.isArray(item.image) && item.image.length > 0) {
+            return item.image[0].url;
+        }
+        return 'https://cdn.pixabay.com/photo/2012/04/01/17/29/box-23649_960_720.png';
+    };
+
     useEffect(() => {
         if (item.countInStock === 0) {
             setAvailability(<TrafficLight unavailable></TrafficLight>);
@@ -32,7 +40,7 @@ const SingleProduct = ({ route }) => {
                     
                     <Image
                         source={{
-                            uri: item.image ? item.image : 'https://cdn.pixabay.com/photo/2012/04/01/17/29/box-23649_960_720.png'
+                            uri: getFirstImage()
                         }}
                         resizeMode="contain"
                         style={styles.image}
