@@ -36,6 +36,7 @@ const Products = (props) => {
                 style={styles.listHeader}
             >
                 <View style={styles.headerItem}></View>
+                <View style={styles.headerItem}></View>
                 <View style={styles.headerItem}>
                     <Text style={{ fontWeight: '600' }}>Brand</Text>
                 </View>

@@ -87,21 +87,21 @@ const ListItem = ({ item, index, deleteProduct }) => {
                 style={[styles.container, {
                     backgroundColor: index % 2 == 0 ? "white" : "gainsboro"
                 }]}
-            >
-                <Image
-                    source={{
-                        uri: item.image
-                            ? item.image
-                            : null
-                    }}
-                    resizeMode="contain"
-                    style={styles.image}
-                />
-                <Text style={styles.item}>{item.brand}</Text>
-                <Text style={styles.item} numberOfLines={1} ellipsizeMode="tail">{item.name ? item.name : null}</Text>
-                <Text style={styles.item} numberOfLines={1} ellipsizeMode="tail">{item.category ? item.category.name : null}</Text>
-                <Text style={styles.item}>$ {item.price}</Text>
-            </TouchableOpacity>
+                >
+                {item.image.map((image, index) => (
+                    <Image
+                        key={index}
+                        source={{ uri: image.url }}
+                        resizeMode="contain"
+                        style={styles.image}
+                    />
+    ))}
+    <Text style={styles.item}>{item.brand}</Text>
+    <Text style={styles.item} numberOfLines={1} ellipsizeMode="tail">{item.name ? item.name : null}</Text>
+    <Text style={styles.item} numberOfLines={1} ellipsizeMode="tail">{item.category ? item.category.name : null}</Text>
+    <Text style={styles.item}>$ {item.price}</Text>
+</TouchableOpacity>
+
         </View>
     )
 }
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     image: {
         borderRadius: 50,
         width: width / 6,
-        height: 20,
+        height: 50,
         margin: 2
     },
     item: {

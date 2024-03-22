@@ -19,6 +19,7 @@ import baseURL from "../../assets/common/baseurl"
 import Error from "../../Shared/Error"
 import axios from "axios"
 import * as ImagePicker from "expo-image-picker"
+import * as ImageManipulator from "expo-image-manipulator";
 import { useFocusEffect, useNavigation } from "@react-navigation/native"
 import mime from "mime";
 
@@ -30,8 +31,11 @@ const ProductForm = (props) => {
     const [name, setName] = useState('');
     const [price, setPrice] = useState(0);
     const [description, setDescription] = useState('');
-    const [image, setImage] = useState('');
-    const [mainImage, setMainImage] = useState();
+    // const [image, setImage] = useState('');
+    // const [mainImage, setMainImage] = useState();
+
+    const [selectedImages, setSelectedImages] = useState([]);
+
     const [category, setCategory] = useState('');
     const [categories, setCategories] = useState([]);
     const [token, setToken] = useState();
@@ -54,8 +58,7 @@ const ProductForm = (props) => {
             setName(props.route.params.item.name);
             setPrice(props.route.params.item.price.toString());
             setDescription(props.route.params.item.description);
-            setMainImage(props.route.params.item.image);
-            setImage(props.route.params.item.image);
+            setSelectedImages(props.route.params.item.image);
             setCategory(props.route.params.item.category._id);
             setPickerValue(props.route.params.item.category._id);
             setCountInStock(props.route.params.item.countInStock.toString());
@@ -85,18 +88,60 @@ const ProductForm = (props) => {
     }, [])
 
     const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1
-        });
+        // let result = await ImagePicker.launchImageLibraryAsync({
+        //     mediaTypes: ImagePicker.MediaTypeOptions.All,
+        //     allowsEditing: true,
+        //     aspect: [4, 3],
+        //     quality: 1
+        // });
 
-        if (!result.canceled) {
-            console.log(result)
-            setMainImage(result.assets[0].uri);
-            setImage(result.assets[0].uri);
-        }
+        // if (!result.canceled) {
+        //     console.log(result)
+        //     setMainImage(result.assets[0].uri);
+        //     setImage(result.assets[0].uri);
+        // }
+        let results = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            aspect: [3, 2],
+            quality: 1,
+            allowsMultipleSelection: true,
+          });
+      
+          if (!results.canceled) {
+            const selectedAssets = results.assets;
+      
+            const manipulatorOptions = {
+              compress: 0.5,
+              format: ImageManipulator.SaveFormat.JPEG,
+            };
+      
+            const newImages = [];
+      
+            for (const selectedAsset of selectedAssets) {
+              try {
+                const manipulatedImage = await ImageManipulator.manipulateAsync(
+                  selectedAsset.uri,
+                  [],
+                  manipulatorOptions
+                );
+      
+                if (manipulatedImage) {
+                  newImages.push(manipulatedImage);
+                }
+              } catch (error) {
+                Toast.show({
+                  type: "error",
+                  position: "top",
+                  text1: "Error Adding Image",
+                  text2: `${error}`,
+                  visibilityTime: 3000,
+                  autoHide: true,
+                });
+              }
+            }
+      
+            setSelectedImages(newImages);
+          }
     }
     
 
@@ -113,7 +158,20 @@ const ProductForm = (props) => {
         }
 
         let formData = new FormData();
-        const newImageUri = "file:///" + image.split("file:/").join("");
+        //const newImageUri = "file:///" + image.split("file:/").join("");
+
+        if (selectedImages.length > 0) {
+            selectedImages.forEach((image, index) => {
+              const imageName = image.uri.split("/").pop();
+              const imageType = "image/" + imageName.split(".").pop();
+    
+              formData.append("image", {
+                uri: image.uri,
+                name: imageName,
+                type: imageType,
+              });
+            });
+          }
 
         formData.append("name", name);
         formData.append("brand", brand);
@@ -125,11 +183,7 @@ const ProductForm = (props) => {
         formData.append("rating", rating);
         formData.append("numReviews", numReviews);
         formData.append("isFeatured", isFeatured);
-        formData.append("image", {
-            uri: newImageUri,
-            type: mime.getType(newImageUri),
-            name: newImageUri.split("/").pop()
-        });
+ 
 
         const config = {
             headers: {
@@ -195,14 +249,64 @@ const ProductForm = (props) => {
     
     return (
         <FormContainer title="Add Product">
-            <View style={styles.imageContainer}>
-                <Image style={styles.image} source={{ uri: mainImage }} />
+          <View style={styles.imageContainer}>
+                {selectedImages?.map((image, index) => (
+                    <View style={styles.imageWrapper} key={index}>
+                        <Image
+                            style={styles.image}
+                            source={{ uri: image.uri }}
+                        />
+                    </View>
+                ))}
+                   {selectedImages?.length > 0 ? (
+                      <Text
+                      
+                      >
+                         {selectedImages.length} image
+                        {selectedImages.length > 1 ? "s" : ""}
+                      </Text>
+                    ) : (
+                      <Text
+                      
+                      >
+                        No Image
+                      </Text>
+                    )}
+                <TouchableOpacity onPress={pickImage} style={styles.imagePicker}>
+                    <Icon style={{ color: "white" }} name="camera" />
+                </TouchableOpacity>
+            </View>
+
+            {/* PREVIOUS IMAGE CODE */}
+            {/* <View style={styles.imageContainer}>
+                {selectedImages?.map((image, index) => (
+                    <Image
+                        key={index}
+                        style={styles.image}
+                        source={{ uri: image.uri }}
+                    />
+                ))}
                 <TouchableOpacity
                     onPress={pickImage}
                     style={styles.imagePicker}>
                     <Icon style={{ color: "white" }} name="camera" />
                 </TouchableOpacity>
-            </View>
+                {selectedImages?.length > 0 ? (
+                      <Text
+                      
+                      >
+                        Add {selectedImages.length} image
+                        {selectedImages.length > 1 ? "s" : ""}
+                      </Text>
+                    ) : (
+                      <Text
+                      
+                      >
+                        No Image
+                      </Text>
+                    )}
+                    
+            </View> */}
             <View style={styles.label}>
                 <Text style={{ textDecorationLine: "underline" }}>Brand</Text>
             </View>
@@ -303,20 +407,24 @@ const styles = StyleSheet.create({
         color: "white"
     },
     imageContainer: {
+        flexDirection: 'row', // Arrange children in a row
+        flexWrap: 'wrap', // Allow wrapping
         width: 200,
         height: 200,
-        borderStyle: "solid",
-        borderWidth: 8,
-        padding: 0,
         justifyContent: "center",
-        borderRadius: 100,
+        alignItems: "center",
         borderColor: "#E0E0E0",
         elevation: 10
     },
+    imageWrapper: {
+        width: '50%', // Each image wrapper takes up half the container's width
+        height: '50%', // and half the container's height
+        padding: 4, // Optional: Adjust padding to create space between images
+    },
     image: {
-        width: "100%",
-        height: "100%",
-        borderRadius: 100
+        width: '100%', // Make image fill the wrapper
+        height: '100%', // Adjust height accordingly
+        resizeMode: 'cover', // Cover the whole area of the wrapper, you might want to adjust this
     },
     imagePicker: {
         position: "absolute",
@@ -326,7 +434,7 @@ const styles = StyleSheet.create({
         padding: 8,
         borderRadius: 100,
         elevation: 20
-    }
+    },
 })
 
 
