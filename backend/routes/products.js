@@ -4,6 +4,8 @@ const { Category } = require('../models/category');
 const router = express.Router();
 const mongoose = require('mongoose');
 const multer = require('multer');
+const { cloudinary } = require("../utils/cloudinary");
+const { STATUSCODE, RESOURCE } = require("../constants/index");
 
 const FILE_TYPE_MAP = {
     'image/png': 'png',
@@ -57,20 +59,34 @@ router.get(`/:id`, async (req, res) =>{
     res.send(product);
 })
 
-router.post(`/`, uploadOptions.single('image'), async (req, res) => {
+router.post(`/`, uploadOptions.array('image', 5), async (req, res) => {
     const category = await Category.findById(req.body.category);
     if (!category) return res.status(400).send('Invalid Category');
 
-    const file = req.file;
-    if (!file) return res.status(400).send('No image in the request');
+    let image = [];
+  if (req.files && Array.isArray(req.files)) {
+    image = await Promise.all(
+      req.files.map(async (file) => {
+        const result = await cloudinary.uploader.upload(file.path, {
+          public_id: file.filename,
+        });
+        return {
+          public_id: result.public_id,
+          url: result.secure_url,
+          originalname: file.originalname,
+        };
+      })
+    );
+  }
 
-    const fileName = file.filename;
-    const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
+  if (image.length === STATUSCODE.ZERO)
+    throw new ErrorHandler("At least one image is required");
+
     let product = new Product({
         name: req.body.name,
         description: req.body.description,
         richDescription: req.body.richDescription,
-        image: `${basePath}${fileName}`, // "http://localhost:3000/public/upload/image-2323232"
+        image: image,
         brand: req.body.brand,
         price: req.body.price,
         category: req.body.category,
@@ -88,7 +104,7 @@ router.post(`/`, uploadOptions.single('image'), async (req, res) => {
 });
 
 
-router.put('/:id', uploadOptions.single('image'), async (req, res) => {
+router.put('/:id', uploadOptions.array('image', 5), async (req, res) => {
     console.log(req.body);
     if (!mongoose.isValidObjectId(req.params.id)) {
         return res.status(400).send('Invalid Product Id');
@@ -99,16 +115,39 @@ router.put('/:id', uploadOptions.single('image'), async (req, res) => {
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(400).send('Invalid Product!');
 
-    const file = req.file;
-    let imagepath;
+    // const file = req.file;
+    // let imagepath;
 
-    if (file) {
-        const fileName = file.filename;
-        const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
-        imagepath = `${basePath}${fileName}`;
-    } else {
-        imagepath = product.image;
+    // if (file) {
+    //     const fileName = file.filename;
+    //     const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
+    //     imagepath = `${basePath}${fileName}`;
+    // } else {
+    //     imagepath = product.image;
+    // }
+
+    let image = product.image || [];
+    if (req.files && Array.isArray(req.files) && req.files.length > 0) {
+      image = await Promise.all(
+        req.files.map(async (file) => {
+          const result = await cloudinary.uploader.upload(file.path, {
+            public_id: file.filename,
+          });
+          return {
+            public_id: result.public_id,
+            url: result.secure_url,
+            originalname: file.originalname,
+          };
+        })
+      );
+  
+      if (product.image && product.image.length > 0) {
+        await cloudinary.api.delete_resources(
+            product.image.map((image) => image.public_id)
+        );
+      }
     }
+  
 
     const updatedProduct = await Product.findByIdAndUpdate(
         req.params.id,
@@ -116,7 +155,7 @@ router.put('/:id', uploadOptions.single('image'), async (req, res) => {
             name: req.body.name,
             description: req.body.description,
             richDescription: req.body.richDescription,
-            image: imagepath,
+            image: image,
             brand: req.body.brand,
             price: req.body.price,
             category: req.body.category,
