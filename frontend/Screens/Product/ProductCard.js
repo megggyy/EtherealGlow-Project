@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import {
     StyleSheet,
     View,
@@ -6,25 +6,34 @@ import {
     Image,
     Text,
     Button
-} from 'react-native'
-import { addToCart } from '../../Redux/Actions/cartActions'
-import { useSelector, useDispatch } from 'react-redux'
-import Toast from 'react-native-toast-message'
+} from 'react-native';
+import { addToCart } from '../../Redux/Actions/cartActions';
+import { useSelector, useDispatch } from 'react-redux';
+import Toast from 'react-native-toast-message';
 var { width } = Dimensions.get("window");
 
 const ProductCard = (props) => {
     const { name, price, image, countInStock } = props;
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+
+    // Function to get the first image URL from the array
+    const getFirstImage = () => {
+        if (Array.isArray(image) && image.length > 0) {
+            return image[0].url;
+        }
+        return 'https://cdn.pixabay.com/photo/2012/04/01/17/29/box-23649_960_720.png';
+    };
+
     return (
         <View style={styles.container}>
             <Image
                 style={styles.image}
                 resizeMode="contain"
                 source={{
-                    uri: image ?
-                        image : 'https://cdn.pixabay.com/photo/2012/04/01/17/29/box-23649_960_720.png'
+                    uri: getFirstImage() 
                 }}
             />
+            
             <View style={styles.card} />
             <Text style={styles.title}>
                 {(name.length && name.length > 15) ? name.substring(0, 15 - 3)
@@ -52,8 +61,8 @@ const ProductCard = (props) => {
                 </View>
             ) : <Text style={{ marginTop: 20 }}>Currently Unavailable</Text>}
         </View>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -91,6 +100,6 @@ const styles = StyleSheet.create({
         color: 'orange',
         marginTop: 10
     }
-})
+});
 
 export default ProductCard;
