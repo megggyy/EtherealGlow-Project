@@ -6,23 +6,31 @@ import TrafficLight from '../../Shared/StyledComponents/TrafficLight'
 const SingleCategory = ({ route }) => {
     const [item, setItem] = useState(route.params.item);
  
+    const getFirstImage = () => {
+        if (Array.isArray(item.image) && item.image.length > 0) {
+            return item.image[0].url;
+        }
+        return 'https://cdn.pixabay.com/photo/2012/04/01/17/29/box-23649_960_720.png';
+    };
+
     return (
         <Center flexGrow={1}>
             <ScrollView style={{ marginBottom: 80, padding: 5 }}>
                 <View>
                     
-                    <Image
+                <Image
                         source={{
-                            uri: item.image ? item.image : 'https://cdn.pixabay.com/photo/2012/04/01/17/29/box-23649_960_720.png'
+                            uri: getFirstImage()
                         }}
                         resizeMode="contain"
                         style={styles.image}
                     />
 
+
                 </View> 
                 <View style={styles.contentContainer}>
                     <Heading style={styles.contentHeader} size='xl'>{item.name}</Heading>
-                    <Text style={styles.contentText}>{item.brand}</Text>
+                    <Text style={styles.contentText}>{item.description}</Text>
                 </View>
                 {/* <View style={styles.availabilityContainer}>
                     <View style={styles.availability}>
@@ -31,7 +39,7 @@ const SingleCategory = ({ route }) => {
                         </Text>
                         {availability}
                     </View>
-                    <Text>{item.description}</Text>
+                  
                 </View> */}
                 {/* <EasyButton
                     primary
