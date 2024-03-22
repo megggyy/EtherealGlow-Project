@@ -13,13 +13,25 @@ const productSchema = mongoose.Schema({
         type: String,
         default: ''
     },
-    image: {
-        type: String,
-        default: ''
-    },
-    images: [{
-        type: String
-    }],
+    // image: {
+    //     type: String,
+    //     default: ''
+    // },
+    // images: [{
+    //     type: String
+    // }],
+    image: [
+        {
+            public_id: {
+                type: String,
+                required: true
+            },
+            url: {
+                type: String,
+                required: true
+            },
+        }
+    ],
     brand: {
         type: String,
         default: ''
