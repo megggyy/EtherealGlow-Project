@@ -34,10 +34,14 @@ const SearchedProduct = (props) => {
                             borderColor: "muted.50"
                         }} borderColor="muted.800" pl={["0", "4"]} pr={["0", "5"]} py="2">
                             <HStack space={[2, 3]} justifyContent="space-between">
-                                <Avatar size="48px" source={{
-                                    uri: item.image ?
-                                        item.image : 'https://cdn.pixabay.com/photo/2012/04/01/17/29/box-23649_960_720.png'
-                                }} />
+                            <Avatar 
+                                size="48px" 
+                                source={{
+                                    uri: item.image && Array.isArray(item.image) && item.image.length > 0 ?
+                                        item.image[0].url : 'https://cdn.pixabay.com/photo/2012/04/01/17/29/box-23649_960_720.png'
+                                }} 
+                            />
+
                                 <VStack>
                                     <Text _dark={{
                                         color: "warmGray.50"
