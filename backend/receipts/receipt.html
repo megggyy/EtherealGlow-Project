@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Receipt</title>
+
+    <style>
+        html,
+        body {
+            margin: 10px;
+            padding: 10px;
+            font-family: sans-serif;
+        }
+        h1,h2,h3,h4,h5,h6,p,span,label {
+            font-family: sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0px !important;
+        }
+        table thead th {
+            height: 28px;
+            text-align: left;
+            font-size: 16px;
+            font-family: sans-serif;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        .heading {
+            font-size: 24px;
+            margin-top: 12px;
+            margin-bottom: 12px;
+            font-family: sans-serif;
+        }
+        .small-heading {
+            font-size: 18px;
+            font-family: sans-serif;
+        }
+        .total-heading {
+            font-size: 18px;
+            font-weight: 700;
+            font-family: sans-serif;
+        }
+        .order-details tbody tr td:nth-child(1) {
+            width: 20%;
+        }
+        .order-details tbody tr td:nth-child(3) {
+            width: 20%;
+        }
+
+        .text-start {
+            text-align: left;
+        }
+        .text-end {
+            text-align: right;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .company-data span {
+            margin-bottom: 4px;
+            display: inline-block;
+            font-family: sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+        }
+        .no-border {
+            border: 1px solid #fff !important;
+        }
+        .bg-blue {
+            background-color: #ff2487;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="text-center">
+        <img src="https://res.cloudinary.com/di9gjajky/image/upload/v1711255172/ie6pbtpwkclaueeojltb.png" alt="Ethereal Glow Logo" style="max-width: 40%;">
+    </div>
+
+    <div class="text-center">
+        <h2>Order Receipt</h2>
+    </div>
+    
+    <!-- User Details Table -->
+    <div class="order-summary">
+    <table class="order-details">
+        <thead>
+            <tr class="bg-blue">
+                <th width="100%" colspan="2">User Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Full Name:</td>
+                <td>{{ customerName }}</td>
+            </tr>
+            <tr>
+                <td>Email:</td>
+                <td>{{ email }}</td>
+            </tr>
+            <tr>
+                <td>Address:</td>
+                <td>{{ shippingAddress }}</td>
+            </tr>
+            <tr>
+                <td>Phone:</td>
+                <td>{{ phonenumber }}</td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+
+    <!-- Order Items Table -->
+    <div class="order-summary">
+    <h3 class="heading text-start">Ordered Products</h3>
+    <table class="order-details">
+        <thead>
+            <tr class="bg-blue">
+                <th>ID</th>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each orderItems}}
+                <tr>
+                  
+                </tr>
+        </tbody>
+    </table>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="order-summary">
+        <h3 class="heading text-start">Order Summary</h3>
+        <table>
+            <tr>
+                <td>Total Amount:</td>
+                <td>${{ itemsPrice }}</td>
+            </tr>
+            <tr>
+                <td>Tax:</td>
+                <td>${{ taxPrice }}</td>
+            </tr>
+            <tr>
+                <td>Shipping Cost:</td>
+                <td>${{ shippingPrice }}</td>
+            </tr>
+            <tr>
+                <td class="total-heading">Total:</td>
+                <td class="total-heading">${{ totalPrice }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Payment Information Table -->
+    <div class="order-summary">
+    <h3 class="heading text-start">Payment Information</h3>
+    <table class="order-details">
+        <thead>
+            <tr class="bg-blue">
+                <th width="100%" colspan="2">Payment Information</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Payment Method:</td>
+                <td>{{ paymentInfo.status }}</td>
+            </tr>
+            <tr>
+                <td>Transaction ID:</td>
+                <td>{{ paymentInfo.id }}</td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+
+    <p class="text-center">
+        Thank you for shopping with Ethereal Glow!
+    </p>
+</body>
+</html>
