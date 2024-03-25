@@ -1,7 +1,15 @@
 const { Order } = require('../models/order');
 const express = require('express');
 const { OrderItem } = require('../models/order-item');
+const { User } = require('../models/user'); 
 const router = express.Router();
+const ErrorHandler = require("../utils/errorHandler");
+const mongoose = require("mongoose");
+const { STATUSCODE, RESOURCE } = require("../constants/index");
+const { sendEmail } = require("../utils/sendEmail");
+const fs = require("fs");
+const pdf = require("html-pdf");
+const path = require("path");
 
 router.get(`/`, async (req, res) => {
     const orderList = await Order.find().populate('user', 'name').sort({ 'dateOrdered': -1 });
@@ -20,7 +28,7 @@ router.get(`/:id`, async (req, res) => {
             path: 'orderItems', 
             populate: {
                 path: 'product', 
-                populate: 'category'
+                populate: 'category name price'
             }
         });
 
@@ -31,29 +39,22 @@ router.get(`/:id`, async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-    const orderItemsIds = Promise.all(req.body.orderItems.map(async (orderItem) => {
-        console.log(req.body)
-        // const orderItemsIds = req.body.orderItems.map(async (orderItem) => {
+ 
+    try {
+        const orderItemsIds = await Promise.all(req.body.orderItems.map(async (orderItem) => {
             let newOrderItem = new OrderItem({
                 quantity: orderItem.quantity,
                 product: orderItem.product
-            })
+            });
 
             newOrderItem = await newOrderItem.save();
 
             return newOrderItem._id;
-        })
-    )
-        console.log(orderItemsIds)
-        const orderItemsIdsResolved =  await orderItemsIds;
-        console.log(orderItemsIds)
-        // const totalPrices = await Promise.all(orderItemsIdsResolved.map(async (orderItemId)=>{
-        //     const orderItem = await OrderItem.findById(orderItemId).populate('product', 'price');
-        //     const totalPrice = orderItem.product.price * orderItem.quantity;
-        //     return totalPrice
-        // }))
+        }));
 
-        // const totalPrice = totalPrices.reduce((a,b) => a +b , 0);
+        const orderItemsIdsResolved = await orderItemsIds;
+
+   
 
         let order = new Order({
             orderItems: orderItemsIdsResolved,
@@ -64,16 +65,77 @@ router.post('/', async (req, res) => {
             country: req.body.country,
             phone: req.body.phone,
             status: req.body.status,
-            // totalPrice: totalPrice,
             user: req.body.user,
-        })
+        });
         order = await order.save();
 
         if (!order)
-            return res.status(400).send('the order cannot be created!')
+            return res.status(400).send('The order cannot be created!')
+
+            const user = await User.findById(req.body.user);
+
+            if (!user)
+                return res.status(400).send('User not found');
+    
+        const thankYouEmailOptions = `<html>
+            <head>
+                <style>
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>Thank You!</h1>
+                    <p>Thank you for your order.</p>
+                    <p>See attachments for your order details.</p>
+                </div>
+            </body>
+            </html>`;
+
+            const receiptHtml = fs.readFileSync(
+                path.resolve(__dirname, "..", "receipts", "receipt.html"),
+                "utf-8"
+              );
+            
+              const populatedHtml = receiptHtml
+              .replace('{{ customerName }}', user.name)
+              .replace('{{ email }}', user.email)
+              .replace('{{ phonenumber }}', user.phone)
+              .replace('{{ shippingAddress }}', order.shippingAddress1)
+              .replace('{{#each orderItems}}', order.orderItems.map(item => `
+              <tr>
+                  <td class="product">${item.product.name}</td>
+                  <td class="item-name">${item.product.name}</td>
+                  <td class="item-price">${item.product.price}</td>
+                  <td class="item-quantity">${item.quantity}</td>
+                  <td class="item-total">${item.quantity * item.product.price}</td>
+              </tr>
+          `).join(''));          
+        const pdfOptions = { format: 'Letter' };
+        pdf.create(populatedHtml, pdfOptions).toFile('./receipt.pdf', async function (err, response) {
+            if (err) {
+                console.error('Error generating PDF:', err);
+            } else {
+                try {
+                    await sendEmail({
+                        to: user.email, // Assuming you have the user's email in the order request
+                        subject: 'Thank you for your order!',
+                        html: thankYouEmailOptions,
+                        attachments: [{ path: response.filename }],
+                    });
+
+                    console.log('Order confirmation email sent with PDF attachment');
+                } catch (error) {
+                    console.error('Error sending order confirmation email:', error.message);
+                }
+            }
+        });
 
         res.send(order);
-    })
+    } catch (error) {
+        console.error('Error placing order:', error);
+        res.status(500).send('An error occurred while placing the order.');
+    }
+});
 
 
 
