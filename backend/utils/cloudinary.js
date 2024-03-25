@@ -14,21 +14,28 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: (req, file) => {
-    const fileName = file.originalname.replace(/\.[^/.]+$/, "");
-    const uniqueFilename = uuidv4();
-    return {
-      folder: RESOURCE.IMAGES,
-      transformation: [
-        { width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT, crop: LIMIT },
-      ],
-      public_id: `${fileName}-${uniqueFilename}`,
-    };
+const FILE_TYPE_MAP = {
+    'image/png': 'png',
+    'image/jpeg': 'jpeg',
+    'image/jpg': 'jpg'
+};
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+      const isValid = FILE_TYPE_MAP[file.mimetype];
+      let uploadError = new Error('invalid image type');
+
+      if (isValid) {
+          uploadError = null;
+      }
+      cb(uploadError, 'public/uploads');
   },
+  filename: function (req, file, cb) {
+      const fileName = file.originalname.split(' ').join('-');
+      const extension = FILE_TYPE_MAP[file.mimetype];
+      cb(null, `${fileName}-${Date.now()}.${extension}`);
+  }
 });
+const uploadOptions = multer({ storage: storage });
 
-const upload = multer({ storage: storage });
-
-module.exports = { cloudinary, upload };
+module.exports = { cloudinary, uploadOptions };
