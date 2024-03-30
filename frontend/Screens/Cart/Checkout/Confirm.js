@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { View, StyleSheet, Dimensions, ScrollView, Button } from "react-native";
 import { Text, HStack, VStack, Avatar, Spacer, Center } from "native-base";
-
 import { clearCart } from "../../../Redux/Actions/cartActions";
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Toast from "react-native-toast-message";
@@ -25,12 +24,11 @@ const Confirm = (props) => {
     const confirmOrder = () => {
         const order = finalOrder.order.order;
 
-        AsyncStorage.getItem("jwt")
-            .then((res) => {
-                setToken(res)
-
-            })
-            .catch((error) => console.log(error))
+        // AsyncStorage.getItem("jwt")
+        //     .then((res) => {
+        //         setToken(res)
+        //     })
+        //     .catch((error) => console.log(error))
         const config = {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -46,8 +44,8 @@ const Confirm = (props) => {
                         text1: "Order Completed",
                         text2: "",
                     });
-                    // dispatch(clearCart())
-                    // navigation.navigate("Cart")
+                    // dispatch(actions.clearCart())
+                    // props.navigation.navigate("Cart")
 
                     setTimeout(() => {
                         dispatch(clearCart())
@@ -64,30 +62,33 @@ const Confirm = (props) => {
                 });
             });
     }
+
+    
     return (
         <Center>
             <ScrollView contentContainerStyle={styles.container}>
                 <View style={styles.titleContainer}>
-                    <Text style={{ fontSize: 20, fontWeight: "bold" }}>Confirm Order</Text>
+                    <Text style={{ fontSize: 30, fontWeight: "bold", paddingTop: 20 }}>Confirm Order</Text>
                     {props.route.params ? (
-                        <View style={{ borderWidth: 1, borderColor: "orange" }}>
+                        <View>
                             <Text style={styles.title}>Shipping to:</Text>
-                            <View style={{ padding: 8 }}>
-                                <Text>Address: {finalOrder.order.order.shippingAddress1}</Text>
-                                <Text>Address2: {finalOrder.order.order.shippingAddress2}</Text>
-                                <Text>City: {finalOrder.order.order.city}</Text>
-                                <Text>Zip Code: {finalOrder.order.order.zip}</Text>
-                                <Text>Country: {finalOrder.order.order.country}</Text>
+                            <View style={{ padding: 16 }}>
+                                <Text style={{ fontSize: 20 }}>Address: {finalOrder.order.order.shippingDetails.address}</Text>
+                                <Text style={{ fontSize: 20 }}>City: {finalOrder.order.order.shippingDetails.city}</Text>
+                                <Text style={{ fontSize: 20 }}>Zip Code: {finalOrder.order.order.shippingDetails.postalCode}</Text>
+                                <Text style={{ fontSize: 20 }}>Country: {finalOrder.order.order.shippingDetails.country}</Text> 
                             </View>
-                            <Text style={styles.title}>items</Text>
+                            <Text style={styles.title}>Order Items</Text>
 
                             {finalOrder.order.order.orderItems.map((item) => {
                                 return (
                                     <HStack space={[2, 3]} justifyContent="space-between" key={item.id}>
-                                        <Avatar size="48px" source={{
-                                            uri: item.image ?
-                                                item.image : 'https://cdn.pixabay.com/photo/2012/04/01/17/29/box-23649_960_720.png'
-                                        }}
+                                          <Avatar 
+                                            size="68px" 
+                                            source={{
+                                                uri: item.image && Array.isArray(item.image) && item.image.length > 0 ?
+                                                    item.image[0].url : 'https://cdn.pixabay.com/photo/2012/04/01/17/29/box-23649_960_720.png'
+                                            }} 
                                         />
                                         <VStack>
                                             <Text _dark={{
@@ -101,7 +102,13 @@ const Confirm = (props) => {
                                         <Text fontSize="xs" _dark={{
                                             color: "warmGray.50"
                                         }} color="coolGray.800" alignSelf="flex-start">
-                                            {item.price}
+                                            {item.quantity}
+                                        </Text>
+                                        <Spacer />
+                                        <Text fontSize="xs" _dark={{
+                                            color: "warmGray.50"
+                                        }} color="coolGray.800" alignSelf="flex-start">
+                                            {item.price * item.quantity}
                                         </Text>
                                     </HStack>
                                 )
@@ -123,19 +130,21 @@ const Confirm = (props) => {
 const styles = StyleSheet.create({
     container: {
         height: height,
-        padding: 8,
+        width: width,
         alignContent: "center",
-        backgroundColor: "white",
+        backgroundColor: "white",  
     },
     titleContainer: {
         justifyContent: "center",
         alignItems: "center",
-        margin: 8,
+        margin: 16,
+        borderWidth: 5, 
+        borderColor: "pink"
     },
     title: {
         alignSelf: "center",
         margin: 8,
-        fontSize: 16,
+        fontSize: 22,
         fontWeight: "bold",
     },
     listItem: {
