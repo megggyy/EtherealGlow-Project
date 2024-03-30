@@ -1,6 +1,7 @@
 const { Order } = require('../models/order');
 const { OrderItem } = require('../models/order-item');
 const { User } = require('../models/user');
+const { Product } = require('../models/product');
 const fs = require("fs");
 const pdf = require("html-pdf");
 const path = require("path");
@@ -38,26 +39,22 @@ exports.getOrderById = async (req, res, next) => {
 
 exports.createOrder = async (req, res, next) => {
     try {
-        const orderItemsIds = await Promise.all(req.body.orderItems.map(async (orderItem) => {
-            let newOrderItem = new OrderItem({
-                quantity: orderItem.quantity,
-                product: orderItem.product
-            });
-
-            newOrderItem = await newOrderItem.save();
-
-            return newOrderItem._id;
-        }));
+        const {
+            orderItems,
+            shippingDetails,
+            totalPrice,
+            status,
+            paymentMethod,
+            cardType,
+        } = req.body;
 
         const order = new Order({
-            orderItems: orderItemsIds,
-            shippingAddress1: req.body.shippingAddress1,
-            shippingAddress2: req.body.shippingAddress2,
-            city: req.body.city,
-            zip: req.body.zip,
-            country: req.body.country,
-            phone: req.body.phone,
-            status: req.body.status,
+            orderItems,
+            shippingDetails,
+            status,
+            totalPrice,
+            paymentMethod,
+            cardType,
             user: req.body.user,
         });
 
@@ -78,33 +75,46 @@ exports.createOrder = async (req, res, next) => {
             </head>
             <body>
                 <div class="container">
-                    <h1>Thank You!</h1>
-                    <p>Thank you for your order.</p>
-                    <p>See attachments for your order details.</p>
+                <h1>Dear ${user.name},</h1>
+                <p>Your order (#${order._id}) has been confirmed. Wait for your parcel to arrive. Thank you for shopping with us!</p>
+                <p>Order Items:</p>
+                <ul>
+                    ${order.orderItems.map(item => `<li>${item.name} - ${item.quantity} x $${item.price}</li>`).join('')}
+                </ul>
+                <p>Total Amount: $${order.totalPrice}</p>
+                <p>Order Status: Confirmed</p>
+                <p>Thank you for choosing our store!</p>
+                <p>Please see attachments for your e-receipt.</p>
                 </div>
             </body>
             </html>`;
+          
 
         const receiptHtml = fs.readFileSync(
             path.resolve(__dirname, "..", "receipts", "receipt.html"),
             "utf-8"
         );
-
+        const statusMap = {
+            1: 'Completed',
+            2: 'Shipped',
+            3: 'Pending'
+        };
         const populatedHtml = receiptHtml
             .replace('{{ customerName }}', user.name)
             .replace('{{ email }}', user.email)
             .replace('{{ phonenumber }}', user.phone)
-            .replace('{{ shippingAddress }}', order.shippingAddress1)
-            // .replace('{{#each orderItems}}', order.orderItems.map(item => `
-            //     <tr>
-            //         <td class="product">${item.product.name}</td>
-            //         <td class="item-name">${item.product.name}</td>
-            //         <td class="item-price">${item.product.price}</td>
-            //         <td class="item-quantity">${item.quantity}</td>
-            //         <td class="item-total">${item.quantity * item.product.price}</td>
-            //     </tr>
-            // `).join(''));
-
+            .replace('{{ shippingAddress }}', `${shippingDetails.address}, ${shippingDetails.city}, ${shippingDetails.postalCode}, ${shippingDetails.country}`)
+            .replace('{{#each orderItems}}', order.orderItems.map(item => `
+            <tr>
+                <td class="item-name">${item.name}</td>
+                <td class="item-price">${item.price}</td>
+                <td class="item-quantity">${item.quantity}</td>
+                <td class="item-total">${item.quantity * item.price}</td>
+            </tr>
+        `).join(''))
+        .replace('{{ status }}', statusMap[order.status]) 
+        .replace('{{ paymentMethod }}', order.paymentMethod)
+        .replace('{{ totalPrice }}', order.totalPrice)
         const pdfOptions = { format: 'Letter' };
         pdf.create(populatedHtml, pdfOptions).toFile('./receipt.pdf', async function (err, response) {
             if (err) {
@@ -132,6 +142,7 @@ exports.createOrder = async (req, res, next) => {
     }
 };
 
+
 exports.updateOrder = async (req, res, next) => {
     try {
         const order = await Order.findByIdAndUpdate(
@@ -143,13 +154,44 @@ exports.updateOrder = async (req, res, next) => {
         );
 
         if (!order)
-            return res.status(400).send('the order cannot be update!')
+            return res.status(400).send('The order cannot be updated!');
+
+        // Send email if order status is "Shipped" or "Completed"
+        if (order.status === '2' || order.status === '1') {
+            const user = await User.findById(order.user);
+
+            if (!user)
+                return res.status(400).send('User not found');
+
+            let emailOptions;
+            if (order.status === '2') {
+                emailOptions = {
+                    to: user.email,
+                    subject: 'Your order has been shipped!',
+                    html: `<p>Your order (#${order._id}) has been shipped. It will arrive soon!</p>`
+                };
+            } else if (order.status === '1') {
+                emailOptions = {
+                    to: user.email,
+                    subject: 'Your order has been completed!',
+                    html: `<p>Your order (#${order._id}) has been completed. Thank you for shopping with us!</p>`
+                };
+            }
+
+            try {
+                await sendEmail(emailOptions);
+                console.log(`Order status email sent to ${user.email}`);
+            } catch (error) {
+                console.error('Error sending order status email:', error.message);
+            }
+        }
 
         res.send(order);
     } catch (error) {
         res.status(500).send(error.message);
     }
 };
+
 
 exports.deleteOrder = async (req, res, next) => {
     Order.findByIdAndRemove(req.params.id).then(async order => {
