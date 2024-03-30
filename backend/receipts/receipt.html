@@ -122,7 +122,6 @@
     <table class="order-details">
         <thead>
             <tr class="bg-blue">
-                <th>ID</th>
                 <th>Product</th>
                 <th>Price</th>
                 <th>Quantity</th>
@@ -143,16 +142,12 @@
         <h3 class="heading text-start">Order Summary</h3>
         <table>
             <tr>
-                <td>Total Amount:</td>
-                <td>${{ itemsPrice }}</td>
+                <td>Order Status:</td>
+                <td>{{ status }}</td>
             </tr>
             <tr>
-                <td>Tax:</td>
-                <td>${{ taxPrice }}</td>
-            </tr>
-            <tr>
-                <td>Shipping Cost:</td>
-                <td>${{ shippingPrice }}</td>
+                <td>Payment Method:</td>
+                <td>{{ paymentMethod }}</td>
             </tr>
             <tr>
                 <td class="total-heading">Total:</td>
@@ -160,29 +155,6 @@
             </tr>
         </table>
     </div>
-
-    <!-- Payment Information Table -->
-    <div class="order-summary">
-    <h3 class="heading text-start">Payment Information</h3>
-    <table class="order-details">
-        <thead>
-            <tr class="bg-blue">
-                <th width="100%" colspan="2">Payment Information</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Payment Method:</td>
-                <td>{{ paymentInfo.status }}</td>
-            </tr>
-            <tr>
-                <td>Transaction ID:</td>
-                <td>{{ paymentInfo.id }}</td>
-            </tr>
-        </tbody>
-    </table>
-    </div>
-
     <p class="text-center">
         Thank you for shopping with Ethereal Glow!
     </p>
