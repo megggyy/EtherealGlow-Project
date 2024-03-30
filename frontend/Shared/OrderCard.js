@@ -36,18 +36,7 @@ const OrderCard = ({ item, select }) => {
       },
     };
     const order = {
-      city: item.city,
-      country: item.country,
-      dateOrdered: item.dateOrdered,
-      id: item.id,
-      orderItems: item.orderItems,
-      phone: item.phone,
-      shippingAddress1: item.shippingAddress1,
-      shippingAddress2: item.shippingAddress2,
       status: statusChange,
-      totalPrice: item.totalPrice,
-      user: item.user,
-      zip: item.zip,
     };
     axios
       .put(`${baseURL}orders/${item.id}`, order, config)
@@ -110,10 +99,10 @@ const OrderCard = ({ item, select }) => {
           Status: {statusText} {orderStatus}
         </Text>
         <Text>
-          Address: {item.shippingAddress1} {item.shippingAddress2}
+          Address: {item.shippingDetails.address}
         </Text>
-        <Text>City: {item.city}</Text>
-        <Text>Country: {item.country}</Text>
+        <Text>City: {item.shippingDetails.city}</Text>
+        <Text>Country: {item.shippingDetails.country}</Text>
         <Text>Date Ordered: {item.dateOrdered.split("T")[0]}</Text>
         <View style={styles.priceContainer}>
           <Text>Price: </Text>
