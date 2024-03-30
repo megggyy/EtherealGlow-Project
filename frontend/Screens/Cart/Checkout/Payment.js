@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { View, Button, Pressable, FlatList, TouchableOpacity, Dimensions, } from 'react-native'
+
+
 import {
     Container,
     Text,
@@ -41,6 +43,24 @@ const Payment = ({ route }) => {
     const [card, setCard] = useState('');
     console.log(order)
     const navigation = useNavigation()
+    const confirm = () => {
+        // Create a new order object with payment information included
+        //name
+        const selectedMethod = methods.find(method => method.value === selected);
+        const updatedOrder = {
+            
+            ...order,
+            order: {
+                ...order.order,
+                paymentMethod: selectedMethod ? selectedMethod.name : '',
+                cardType: selected === 3 ? card : null
+            }
+        };
+
+        // Navigate to the 'Confirm' screen with the updated order object
+        navigation.navigate("Confirm", { order: updatedOrder });
+    };
+
     return (
         <Center  >
             <Heading>
@@ -103,7 +123,8 @@ const Payment = ({ route }) => {
             <View style={{ marginTop: 60, alignSelf: 'center' }}>
                 <Button
                     title={"Confirm"}
-                    onPress={() => navigation.navigate("Confirm", { order: order })} />
+                    // onPress={() => navigation.navigate("Confirm", { order: order })} />
+                    onPress={() => confirm()} />
             </View>
         </Center>
     )
