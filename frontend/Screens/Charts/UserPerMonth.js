@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Dimensions, ScrollView } from 'react-native';
-import { LineChart, BarChart } from 'react-native-chart-kit';
+import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import baseURL from "../../assets/common/baseurl";
 
 const UsersPerMonthChart = () => {
   const [usersPerMonthData, setUsersPerMonthData] = useState([]);
+  const [categoryData, setCategoryData] = useState([]);
   const [sales, setSales] = useState([]);
   const [token, setToken] = useState('');
   const [error, setError] = useState('');
@@ -46,9 +47,7 @@ const UsersPerMonthChart = () => {
       // Create default mood line array with zeros for all 12 months
       const defaultMoodLine = Array(12).fill(0);
   
-      // Iterate over fetched sales data and assign totals to corresponding months
       const salesData = data.salesPerMonth.reduce((acc, { month, total }) => {
-        // Assuming month names are abbreviated (e.g., Jan, Feb, etc.)
         const monthIndex = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].indexOf(month);
         if (monthIndex !== -1) {
           acc[monthIndex] = total;
@@ -56,7 +55,6 @@ const UsersPerMonthChart = () => {
         return acc;
       }, [...defaultMoodLine]);
   
-      // Set merged data (sales data merged with default mood line)
       setMoodLine(salesData);
   
     } catch (error) {
@@ -64,10 +62,28 @@ const UsersPerMonthChart = () => {
     }
   };
   
-  
+  const fetchCategoryData = async () => {
+    try {
+      const token = await AsyncStorage.getItem("jwt");
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`
+        },
+      };
+
+      const { data } = await axios.get(`http://172.20.10.4:4000/api/v1/products/getProductCountByCategory`, config);  
+      setCategoryData(data);
+      console.log(data.getProductCountByCategory);
+    } catch (error) {
+      console.error('Error fetching users per month data:', error);
+    }
+  };
+
   useEffect(() => {
     fetchUsersPerMonthData();
     fetchSalesData();
+    fetchCategoryData();
   }, []);
 
   const data = {
@@ -80,7 +96,7 @@ const UsersPerMonthChart = () => {
   const chartData = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], // Assuming month labels
     datasets: [{
-      data: moodLine // Use the merged data as chart data
+      data: moodLine 
     }]
   };
 
@@ -90,14 +106,14 @@ const UsersPerMonthChart = () => {
         <Text style={styles.title}>Users Per Month Chart</Text>
         <BarChart
           data={data}
-          width={Dimensions.get('window').width - 40} // Adjusted width with padding
+          width={Dimensions.get('window').width - 40} 
           height={250}
           yAxisLabel=""
           chartConfig={{
             backgroundColor: '#ffffff',
             backgroundGradientFrom: '#fb8c00',
             backgroundGradientTo: '#ffa726',
-            decimalPlaces: 0, // Adjusted decimalPlaces to 0 since it represents user count
+            decimalPlaces: 0, 
             color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             barPercentage: 0.5,
@@ -133,6 +149,26 @@ const UsersPerMonthChart = () => {
           }}
         />
       </View>
+      <View style={styles.container}>
+      <Text style={styles.title}>Products per Category</Text>
+      <PieChart
+        data={categoryData.map(category => ({
+          name: category.category,
+          count: category.count,
+          color: '#' + ((Math.random() * 0xffffff) << 0).toString(16)
+        }))}
+        width={Dimensions.get('window').width - 40} 
+        height={200}
+        chartConfig={{
+          backgroundGradientFrom: '#1E2923',
+          backgroundGradientTo: '#08130D',
+          color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`
+        }}
+        accessor="count"
+        backgroundColor="transparent"
+        paddingLeft="15"
+      />
+    </View>
     </ScrollView>
   );
 };
@@ -141,7 +177,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20, // Added padding for overall padding
+    padding: 20, 
   },
   title: {
     fontSize: 20,
