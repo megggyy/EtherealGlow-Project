@@ -149,7 +149,17 @@ const Products = (props) => {
                     onPress={() => navigation.navigate("UserChart")}
                 >
                     <Icon name="shopping-bag" size={18} color="white" />
-                    <Text style={styles.buttonText}>User Chart</Text>
+                    <Text style={styles.buttonText}>Chart</Text>
+                </EasyButton>
+            </View>
+            <View style={styles.buttonContainer}>
+                <EasyButton
+                    secondary
+                    medium
+                    onPress={() => navigation.navigate("Users")}
+                >
+                    <Icon name="shopping-bag" size={18} color="white" />
+                    <Text style={styles.buttonText}>Users</Text>
                 </EasyButton>
             </View>
             <Searchbar width="80%"

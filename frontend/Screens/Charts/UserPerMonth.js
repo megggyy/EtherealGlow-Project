@@ -11,7 +11,7 @@ const UsersPerMonthChart = () => {
   const [sales, setSales] = useState([]);
   const [token, setToken] = useState('');
   const [error, setError] = useState('');
-  const [moodLine, setMoodLine] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); // Default mood line data
+  const [moodLine, setMoodLine] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); 
 
   const fetchUsersPerMonthData = async () => {
     try {
