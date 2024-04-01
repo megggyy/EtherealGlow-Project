@@ -250,3 +250,55 @@ exports.getUserOrders = async (req, res, next) => {
     }
 };
 
+
+exports.salesPerMonth = async (req, res, next) => {
+    const salesPerMonth = await Order.aggregate([
+
+        {
+            $group: {
+                // _id: {month: { $month: "$paidAt" } },
+                _id: {
+                    year: { $year: "$dateOrdered" },
+                    month: { $month: "$dateOrdered" }
+                },
+                total: { $sum: "$totalPrice" },
+            },
+        },
+
+        {
+            $addFields: {
+                month: {
+                    $let: {
+                        vars: {
+                            monthsInString: [, 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', ' Sept', 'Oct', 'Nov', 'Dec'],
+                            
+                        },
+                        in: {
+                            $arrayElemAt: ['$$monthsInString', "$_id.month"]
+                        }
+                    }
+                }
+            }
+        },
+        { $sort: { "_id.month": 1 } },
+        {
+            $project: {
+                _id: 0,
+                month: 1,
+                total: 1,
+            }
+        }
+ 
+    ])
+    if (!salesPerMonth) {
+        return res.status(404).json({
+            message: 'error sales per month',
+        })
+    }
+    // return console.log(customerSales)
+    res.status(200).json({
+        success: true,
+        salesPerMonth
+    })
+
+}
