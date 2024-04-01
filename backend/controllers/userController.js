@@ -166,4 +166,67 @@ exports.getUserCount = async (req, res, next) => {
     }
 };
 
+exports.getUsersPerMonth = async (req, res, next) => {
+    const getUsersPerMonth = await User.aggregate([
+        {
+          $group: {
+            _id: {
+              year: { $year: "$createdAt" },
+              month: { $month: "$createdAt" },
+            },
+            total: { $sum: 1 }, // Counting the number of users
+          },
+        },
+        {
+          $addFields: {
+            month: {
+              $let: {
+                vars: {
+                  monthsInString: [
+                    null,
+                    "Jan",
+                    "Feb",
+                    "Mar",
+                    "Apr",
+                    "May",
+                    "Jun",
+                    "Jul",
+                    "Aug",
+                    "Sept",
+                    "Oct",
+                    "Nov",
+                    "Dec",
+                  ],
+                },
+                in: {
+                  $arrayElemAt: ["$$monthsInString", "$_id.month"],
+                },
+              },
+            },
+          },
+        },
+        { $sort: { "_id.month": 1 } },
+        {
+          $project: {
+            _id: 0,
+            month: 1,
+            total: 1,
+          },
+        },
+      ]);
+    
+      console.log(getUsersPerMonth);
+    
+      if (!getUsersPerMonth) {
+        return res.status(404).json({
+          message: "Error fetching new users per month",
+        });
+      }
+    
+      res.status(200).json({
+        success: true,
+        getUsersPerMonth,
+      });
+  };
+
 

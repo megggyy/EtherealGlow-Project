@@ -29,6 +29,8 @@ function authJwt() {
                 `${api}/users`,
                 `${api}/users/login`,
                 `${api}/users/register`,
+                `${api}/users/usersPerMonth`,
+                
             ]
         })
 }
