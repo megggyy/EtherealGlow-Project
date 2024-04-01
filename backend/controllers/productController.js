@@ -134,4 +134,25 @@ exports.deleteProduct = async (req, res, next) => {
     }
 };
 
-
+exports.getProductCountByCategory = async (req, res, next) => {
+    try {
+      const getProductCountByCategory = await Product.aggregate([
+        { $group: { _id: '$category', count: { $sum: 1 } } },
+        {
+          $lookup: {
+            from: 'categories', // Assuming your category model is named 'Category'
+            localField: '_id',
+            foreignField: '_id',
+            as: 'category'
+          }
+        },
+        { $unwind: '$category' },
+        { $project: { _id: 0, category: '$category.name', count: 1 } }
+      ]);
+  
+      res.status(200).json(getProductCountByCategory);
+    } catch (error) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  };
+  
