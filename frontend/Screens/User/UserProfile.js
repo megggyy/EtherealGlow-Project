@@ -1,18 +1,18 @@
 import React, { useContext, useState, useCallback } from 'react';
-import { View, Text, ScrollView, Button, StyleSheet } from 'react-native';
-import { Container } from "native-base"
+import { View, Text, ScrollView, Button, StyleSheet, Dimensions, Image, TouchableOpacity } from 'react-native';
+import { Container, Center } from "native-base"
 import { useFocusEffect, useNavigation } from "@react-navigation/native"
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import axios from "axios"
 import baseURL from "../../assets/common/baseurl"
-
+import EasyButton from "../../Shared/StyledComponents/EasyButton";
 import AuthGlobal from "../../Context/Store/AuthGlobal"
 import { logoutUser } from "../../Context/Actions/Auth.actions"
 import OrderCard from '../../Shared/OrderCard';
 
-
+var { width, height } = Dimensions.get("window");
 const UserProfile = (props) => {
     const context = useContext(AuthGlobal)
     const [userProfile, setUserProfile] = useState('')
@@ -59,8 +59,15 @@ const UserProfile = (props) => {
         }, [context.stateUser.isAuthenticated]))
 
     return (
-        <Container style={styles.container}>
-            <ScrollView contentContainerStyle={styles.subContainer}>
+        <Center>
+            <ScrollView contentContainerStyle={styles.container}>
+            
+            <View style={styles.imageContainer}>
+                {userProfile?.image && (
+                    <Image style={styles.image} source={{ uri: userProfile.image }} />
+                )}
+            </View>
+
                 <Text style={{ fontSize: 30 }}>
                     {userProfile ? userProfile.name : ""}
                 </Text>
@@ -94,14 +101,35 @@ const UserProfile = (props) => {
                 </View>
 
             </ScrollView>
-        </Container>
+      
+        </Center>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        height: height,
+        width: width,
+        marginTop: 0,
+        backgroundColor: "white",  
         alignItems: "center"
+    },
+    imageContainer: {
+        width: 200,
+        height: 200,
+        borderStyle: "solid",
+        borderWidth: 8,
+        marginTop:10,
+        padding: 0,
+        justifyContent: "center",
+        borderRadius: 100,
+        borderColor: "#f54284",
+        elevation: 10
+    },
+    image: {
+        width: "100%",
+        height: "100%",
+        borderRadius: 100
     },
     subContainer: {
         alignItems: "center",
@@ -111,6 +139,13 @@ const styles = StyleSheet.create({
         marginTop: 20,
         alignItems: "center",
         marginBottom: 60
+    },
+    updateProfileButton: {
+        fontSize: 18,
+        color: 'blue',
+        marginTop: 10,
+        textDecorationLine: 'underline',
+        textAlign: 'center',
     }
 })
 
