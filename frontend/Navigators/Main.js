@@ -8,9 +8,14 @@ import CartIcon from "../Shared/CartIcon";
 import CartNavigator from "./CartNavigator";
 import UserNavigator from "./UserNavigator";
 import AdminNavigator from "./AdminNavigator";
+import AuthGlobal from '../Context/Store/AuthGlobal';
+
 const Tab = createBottomTabNavigator();
 
 const Main = () => {
+    const { stateUser } = useContext(AuthGlobal);
+    const isAdmin = stateUser.user && stateUser.user.isAdmin;
+
     return (
         <Tab.Navigator
             initialRouteName="Home"
@@ -24,15 +29,9 @@ const Main = () => {
                 name="Home"
                 component={HomeNavigator}
                 options={{
-                    tabBarIcon: ({ color }) => {
-                        return <Icon
-                            name="home"
-                            style={{ position: "relative" }}
-                            color={color}
-                            size={30}
-
-                        />
-                    }
+                    tabBarIcon: ({ color }) => (
+                        <Icon name="home" style={{ position: "relative" }} color={color} size={30} />
+                    )
                 }}
             />
 
@@ -40,49 +39,38 @@ const Main = () => {
                 name="Cart"
                 component={CartNavigator}
                 options={{
-                    tabBarIcon: ({ color }) => {
-                        return <><Icon
-                            name="shopping-cart"
-                            style={{ position: "relative" }}
-                            color={color}
-                            size={30}
-
-                        /><CartIcon /></>
-                    }
+                    tabBarIcon: ({ color }) => (
+                        <>
+                            <Icon name="shopping-cart" style={{ position: "relative" }} color={color} size={30} />
+                            <CartIcon />
+                        </>
+                    )
                 }}
             />
 
-            <Tab.Screen
-                name="Admin"
-                component={AdminNavigator}
-                options={{
-                    tabBarIcon: ({ color }) => {
-                        return <Icon
-                            name="cog"
-                            style={{ position: "relative" }}
-                            color={color}
-                            size={30}
+            {isAdmin && (
+                <Tab.Screen
+                    name="Admin"
+                    component={AdminNavigator}
+                    options={{
+                        tabBarIcon: ({ color }) => (
+                            <Icon name="cog" style={{ position: "relative" }} color={color} size={30} />
+                        )
+                    }}
+                />
+            )}
 
-                        />
-                    }
-                }}
-            />
             <Tab.Screen
                 name="User"
                 component={UserNavigator}
                 options={{
-                    tabBarIcon: ({ color }) => {
-                        return <Icon
-                            name="user"
-                            style={{ position: "relative" }}
-                            color={color}
-                            size={30}
-
-                        />
-                    }
+                    tabBarIcon: ({ color }) => (
+                        <Icon name="user" style={{ position: "relative" }} color={color} size={30} />
+                    )
                 }}
             />
         </Tab.Navigator>
-    )
-}
-export default Main
+    );
+};
+
+export default Main;
