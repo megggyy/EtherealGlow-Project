@@ -239,7 +239,9 @@ exports.getUsersPerMonth = async (req, res, next) => {
 // Wishlist
 exports.createWish = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.params.id);
+    console.log(user);
+
     const product = req.body.product;
 
     if (!product) {

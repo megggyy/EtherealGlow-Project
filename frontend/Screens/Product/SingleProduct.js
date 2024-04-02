@@ -10,7 +10,6 @@ import {
 import { Left, Right, Container, H1, Center, Heading } from "native-base";
 import EasyButton from "../../Shared/StyledComponents/EasyButton";
 import TrafficLight from "../../Shared/StyledComponents/TrafficLight";
-
 import { useDispatch } from "react-redux";
 import Toast from "react-native-toast-message";
 import AuthGlobal from "../../Context/Store/AuthGlobal";
@@ -48,27 +47,34 @@ const SingleProduct = ({ route }) => {
   };
 
   useEffect(() => {
-    retrieveToken();
+    // retrieveToken();
     checkWishlist();
   }, []);
 
-  const retrieveToken = async () => {
-    try {
-      const jwt = await AsyncStorage.getItem("jwt");
-      setToken(jwt);
-    } catch (error) {
-      console.error("Error retrieving token:", error);
-    }
-  };
+  // const retrieveToken = async () => {
+  //   try {
+  //     const jwt = await AsyncStorage.getItem("jwt");
+  //     setToken(jwt);
+  //   } catch (error) {
+  //     console.error("Error retrieving token:", error);
+  //   }
+  // };
 
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
+  // const config = {
+  //   headers: {
+  //     Authorization: `Bearer ${token}`,
+  //   },
+  // };
 
   const checkWishlist = async () => {
     try {
+      const token = await AsyncStorage.getItem("jwt");
+      console.log("JWT Token:", token);
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+      };
       if (wishlist) {
         const response = await axios.get(`${baseURL}wishlist`, config);
         setWishlist(response.data);
@@ -80,13 +86,30 @@ const SingleProduct = ({ route }) => {
   };
 
   const addToWishlist = async () => {
-    try {
+    try { 
+        const token = await AsyncStorage.getItem("jwt");
+        console.log("JWT Token:", token);
+        const config = {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+        };
       const productId = item._id;
       const response = await axios.post(
-        `${baseURL}wishlist`,
-        { product: productId },
-        config
-      );
+        `http://172.20.10.4:4000/api/v1/users/wishlist/${context.stateUser.user.userId}`, { product: productId },  config )
+        .then((res) => {
+          if (res.status === 200 || res.status === 201) {
+              Toast.show({
+                  topOffset: 60,
+                  type: "success",
+                  text1: "Product Added to Wishlist",
+                  text2: ""
+              });
+              setTimeout(() => {
+                  navigation.navigate("Products");
+              }, 500);
+          }
+      })
       console.log(response.data.product)
       if (response.data.success) {
         setWishlist(response.data.product);
@@ -107,10 +130,10 @@ const SingleProduct = ({ route }) => {
   };
 
   const wishlistHandler = async () => {
-    if (!token) {
-      navLogin();
-      return;
-    }
+    // if (!token) {
+    //   navLogin();
+    //   return;
+    // }
 
     if (wishlist) {
       removeFromWishlist();

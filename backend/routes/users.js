@@ -3,6 +3,8 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const { uploadOptions } = require('../utils/cloudinary');
 
+router.post('/wishlist/:id', userController.createWish);
+router.post('/wishlist', userController.getUserWishlist);
 router.get('/usersPerMonth', userController.getUsersPerMonth);
 router.get('/', userController.getUsers);
 router.get('/:id', userController.getUserById);
@@ -14,13 +16,13 @@ router.delete('/:id', userController.deleteUser);
 router.get('/get/count', userController.getUserCount);
 
 // Wishlist
-router
-  .route('/wishlist')
-  .post(userController.createWish)
-  .get(userController.getUserWishlist);
+// router
+//   .route('/wishlist')
+  // .post(userController.createWish)
+//   .get(userController.getUserWishlist);
 
-router.get('/wishlist/:id', userController.getWish);
-router.delete('/wishlist/:id', userController.deleteWish);
+// router.get('/wishlist/:id', userController.getWish);
+// router.delete('/wishlist/:id', userController.deleteWish);
 
 
 module.exports = router;

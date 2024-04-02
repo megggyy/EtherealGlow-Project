@@ -27,7 +27,7 @@ function authJwt() {
                     methods: ['GET', 'OPTIONS', 'POST']
                 },
                 {
-                    url: /\/api\/v1\/users(.*)/,
+                    url: /\/api\/v1\/users\/wishlist(.*)/,
                     methods: ['GET', 'POST', 'PUT', 'OPTIONS', 'DELETE', 'PATCH']
                 },
                 {
@@ -38,7 +38,7 @@ function authJwt() {
                 `${api}/users/login`,
                 `${api}/users/register`,
                 `${api}/users/usersPerMonth`,
-                  `${api}/wishlist`,
+                `${api}/users/wishlist`,
             ]
         })
 }
