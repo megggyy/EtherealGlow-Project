@@ -16,7 +16,7 @@ const AdminNavigator= () => {
     
     return (
         <Stack.Navigator>
-             <Stack.Screen name="Dashboard" component={UserChart} />
+            <Stack.Screen name="Dashboard" component={UserChart} />
             <Stack.Screen name="Products" component={Products} />
             <Stack.Screen name="Categories" component={Categories} />
             <Stack.Screen name="Orders" component={Orders} />

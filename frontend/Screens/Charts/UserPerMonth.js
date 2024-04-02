@@ -4,6 +4,9 @@ import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import baseURL from "../../assets/common/baseurl";
+import EasyButton from "../../Shared/StyledComponents/EasyButton";
+import Icon from "react-native-vector-icons/FontAwesome"
+import { useNavigation } from "@react-navigation/native"
 
 const UsersPerMonthChart = () => {
   const [usersPerMonthData, setUsersPerMonthData] = useState([]);
@@ -11,6 +14,7 @@ const UsersPerMonthChart = () => {
   const [sales, setSales] = useState([]);
   const [token, setToken] = useState('');
   const [error, setError] = useState('');
+  const navigation = useNavigation()
   const [moodLine, setMoodLine] = useState([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); 
 
   const fetchUsersPerMonthData = async () => {
@@ -101,18 +105,53 @@ const UsersPerMonthChart = () => {
   };
 
   return (
+    
     <ScrollView contentContainerStyle={styles.container}>
+         <View style={styles.buttonContainer}>
+                <EasyButton
+                    adminButton
+                    medium
+                    onPress={() => navigation.navigate("Orders")}
+                >
+                    <Icon name="shopping-bag" size={18} color="white" />
+                    <Text style={styles.buttonText}>Orders</Text>
+                </EasyButton>
+                <EasyButton
+                    adminButton
+                    medium
+                    onPress={() => navigation.navigate("Products")}
+                >
+                    <Icon name="plus" size={18} color="white" />
+                    <Text style={styles.buttonText}>Products</Text>
+                </EasyButton>
+                <EasyButton
+                    adminButton
+                    medium
+                    onPress={() => navigation.navigate("Categories")}
+                >
+                    <Icon name="plus" size={18} color="white" />
+                    <Text style={styles.buttonText}>Categories</Text>
+                </EasyButton>
+                <EasyButton
+                    adminButton
+                    medium
+                    onPress={() => navigation.navigate("Users")}
+                >
+                    <Icon name="shopping-bag" size={18} color="white" />
+                    <Text style={styles.buttonText}>Users</Text>
+                </EasyButton>
+            </View>
       <View style={styles.container}>
         <Text style={styles.title}>Users Per Month Chart</Text>
         <BarChart
           data={data}
           width={Dimensions.get('window').width - 40} 
-          height={250}
+          height={250} 
           yAxisLabel=""
           chartConfig={{
             backgroundColor: '#ffffff',
-            backgroundGradientFrom: '#fb8c00',
-            backgroundGradientTo: '#ffa726',
+            backgroundGradientFrom: '#ff265c',
+            backgroundGradientTo: '#ffa6bc',
             decimalPlaces: 0, 
             color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
@@ -132,15 +171,15 @@ const UsersPerMonthChart = () => {
           height={250}
           chartConfig={{
             backgroundColor: '#ffffff',
-            backgroundGradientFrom: '#fb8c00',
-            backgroundGradientTo: '#ffa726',
+            backgroundGradientFrom: '#ff265c',
+            backgroundGradientTo: '#ffa6bc',
             decimalPlaces: 0,
             color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             propsForDots: {
               r: "6",
               strokeWidth: "2",
-              stroke: "#ffa726"
+              stroke: "#ff265c"
             }
           }}
           bezier
@@ -179,11 +218,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 20, 
   },
+  buttonContainer: {
+    margin: 0,
+    alignSelf: 'center',
+    flexDirection: 'row'
+},
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
   },
+  buttonText: {
+    marginLeft: 4,
+    color: 'white'
+}
 });
 
 export default UsersPerMonthChart;

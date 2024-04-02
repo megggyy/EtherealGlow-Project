@@ -8,7 +8,7 @@ const Orders = (props) => {
     const [orderList, setOrderList] = useState()
 
     useFocusEffect(
-        useCallback(
+        useCallback( 
             () => {
                     getOrders();
                 return () => {

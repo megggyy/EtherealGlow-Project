@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     spinner: {
         height: height / 2,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center' 
     },
     container: {
         marginBottom: 160,

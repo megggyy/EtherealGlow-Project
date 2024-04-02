@@ -93,7 +93,7 @@ const Users = (props) => {
         }, 2000);
     }, []);
     useFocusEffect(
-        useCallback(
+        useCallback( 
             () => {
                 // Get Token
                 AsyncStorage.getItem("jwt")
