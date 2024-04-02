@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Dimensions,
   Image,
-  TouchableOpacity,
+
 } from "react-native";
 import { Container, Center } from "native-base";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
@@ -67,7 +67,7 @@ const UserProfile = (props) => {
         AsyncStorage.getItem("jwt")
         .then((res) => {
           axios
-            .get(`http://172.20.10.4:4000/api/v1/users/wishlist/${context.stateUser.user.userId}`, {
+            .get(`http://192.168.151.32:4000/api/v1/users/wishlist/${context.stateUser.user.userId}`, {
               headers: { Authorization: `Bearer ${res}` },
             })
             .then((response) => {
@@ -87,6 +87,7 @@ const UserProfile = (props) => {
       };
     }, [context.stateUser.isAuthenticated])
   );
+
 
   return (
     <Center>
@@ -143,7 +144,7 @@ const UserProfile = (props) => {
           {/* Wishlist Section */}
           <View style={styles.order}>
             <Text style={{ fontSize: 20 }}>My Wishlist</Text>
-            <View>
+            <View style={styles.wishlist}>
               {wishlist.map((product) => (
                 <ProductCard
                   key={product._id}
@@ -201,6 +202,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
     textDecorationLine: "underline",
     textAlign: "center",
+  },
+  wishlist: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "left",
   },
 });
 
