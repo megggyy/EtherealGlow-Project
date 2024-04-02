@@ -20,7 +20,8 @@ function MyStack() {
                 name="Checkout"
                 component={CheckoutNavigator}
                 options={{
-                    title: 'Checkout'
+                    title: 'Checkout',
+                    headerShown: false,
                 }}
             />
         </Stack.Navigator>

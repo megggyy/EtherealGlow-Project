@@ -19,17 +19,17 @@ import {
   Divider,
   Icon,
 } from "native-base";
+import { StyleSheet, Image, SafeAreaView, View } from "react-native";
 import ProductContainer from "../Screens/Product/ProductContainer";
-import 'react-native-gesture-handler';
+import "react-native-gesture-handler";
 import Login from "../Screens/User/Login";
 import Main from "./Main";
 import Cart from "../Screens/Cart/Cart";
 import Products from "../Screens/Admin/Products";
 import AdminNavigator from "./AdminNavigator";
 import ProductList from "../Screens/Product/ProductList";
-global.__reanimatedWorkletInit = () => { };
+global.__reanimatedWorkletInit = () => {};
 const Drawer = createDrawerNavigator();
-
 
 const getIcon = (screenName) => {
   switch (screenName) {
@@ -53,7 +53,7 @@ const getIcon = (screenName) => {
 function CustomDrawerContent(props) {
   return (
     <DrawerContentScrollView {...props} safeArea>
-      <VStack space="6" my="2" mx="1">
+      <VStack space="3" my="1" mx="1">
         <Box px="4">
           <Text bold color="gray.700">
             Mail
@@ -154,24 +154,64 @@ const DrawerNavigator = () => {
       >
         <Drawer.Screen
           name="Home"
-          options={{
-            drawerLabel: 'Home',
-            title: 'Home Screen',
-          }}
           component={Main}
+          options={{
+            drawerLabel: "Home",
+            title: "Home Screen",
+            headerTitle: (props) => <Title {...props} />,
+            headerStyle: {
+              backgroundColor: "#ffb3c6",
+            },
+          }}
         />
-         {/* <Drawer.Screen name="drawer" component={Main} /> */}
+        {/* <Drawer.Screen name="drawer" component={Main} /> */}
         {/* <Drawer.Screen name="Products" component={ProductContainer}   />
         <Drawer.Screen name="Login" component={Login}  />
         <Drawer.Screen name="Cart" component={Cart} />
         <Drawer.Screen name="Product List" component={Products} />  */}
-        <Drawer.Screen name="Products" component={Main} initialParams={{ screen: 'Products' }} />
-        <Drawer.Screen name="Login" component={Main} initialParams={{ screen: 'User' }} />
-         <Drawer.Screen name="Cart" component={Main} initialParams={{ screen: 'Cart' }} />
-        <Drawer.Screen name="Product List" component={Main}  initialParams={{ screen: 'Admin' }}/>
-
+        <Drawer.Screen
+          name="Products"
+          component={Main}
+          initialParams={{ screen: "Products" }}
+          
+        />
+        <Drawer.Screen
+          name="Login"
+          component={Main}
+          initialParams={{ screen: "User" }}
+        />
+        <Drawer.Screen
+          name="Cart"
+          component={Main}
+          initialParams={{ screen: "Cart" }}
+        />
+        <Drawer.Screen
+          name="Product List"
+          component={Main}
+          initialParams={{ screen: "Admin" }}
+        />
       </Drawer.Navigator>
     </Box>
   );
-}
-export default DrawerNavigator
+};
+
+const Title = () => {
+  return (
+    <SafeAreaView style={styles.header}>
+      <Image
+        source={require("../assets/Ethereal.png")}
+        resizeMode="contain"
+        style={{ height: 50, width: 120, left: 180 }}
+      />
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  header: {
+    // padding: 10,
+    marginTop: -10,
+  },
+});
+
+export default DrawerNavigator;

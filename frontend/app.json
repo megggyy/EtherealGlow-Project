@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "rn2024-s",
-    "slug": "rn2024-s",
+    "name": "ethereal-glow",
+    "slug": "ethereal-glow",
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./assets/icon.png",
@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#FFCAD4"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -19,17 +19,17 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/lip-balm.png",
+        "backgroundColor": "#FFCAD4"
       },
-      "package": "com.melfx.rn2024s"
+      "package": "com.athanasia19.etherealglow"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "826110cd-640b-425f-90d5-5f1eefef2853"
+        "projectId": "42643451-87a7-4b08-a8e5-ba9142aaad9f"
       }
     },
     "plugins": [

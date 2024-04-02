@@ -8,7 +8,7 @@ const Header = () => {
             <Image
                 source={require("../assets/etherealglowlogo.png")}
                 resizeMode="contain"
-                style={{ height: 80 }}
+                style={{ height: 50, width:120, left: 90 }}
             />
 
         </SafeAreaView>
@@ -18,12 +18,12 @@ const Header = () => {
 
 const styles = StyleSheet.create({
     header: {
-        width: "100%",
         flexDirection: 'row',
         alignContent: "center",
         justifyContent: "center",
-        padding: 20,
-        marginTop: 80,
+        // padding: 10,
+        marginTop: 50,
+        marginBottom:-60,
     }
 })
 
