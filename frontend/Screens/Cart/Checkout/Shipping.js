@@ -106,7 +106,7 @@ const Checkout = (props) => {
                     keyboardType={"numeric"}
                     onChangeText={(text) => setPostalCode(text)}
                 />
-                <Select
+                {/* <Select
                     width="80%"
                     iosIcon={<Icon name="arrow-down" color={"#007aff"} />}
                     style={{ width: undefined }}
@@ -124,7 +124,7 @@ const Checkout = (props) => {
                             value={c.name}
                         />
                     })}
-                </Select>
+                </Select> */}
                
                 <View style={{ width: '80%', alignItems: "center" }}>
                     <Button title="Confirm" onPress={() => checkOut()} />

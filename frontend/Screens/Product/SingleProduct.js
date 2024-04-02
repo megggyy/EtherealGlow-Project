@@ -121,8 +121,15 @@ const SingleProduct = ({ route }) => {
 
   const removeFromWishlist = async () => {
     try {
+      const token = await AsyncStorage.getItem("jwt");
+      console.log("JWT Token:", token);
+      const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+      };
       const productId = item._id;
-      await axios.delete(`${baseURL}wishlist/${productId}`, config);
+      await axios.delete(`http://172.20.10.4:4000/api/v1/users/wishlist/${productId}/${context.stateUser.user.userId}`, config);
       setWishlist(null);
     } catch (error) {
       console.error(error);
@@ -186,18 +193,18 @@ const SingleProduct = ({ route }) => {
           </View>
           <Text>{item.description}</Text>
         </View>
-        <EasyButton primary medium>
+        {/* <EasyButton primary medium>
           <Text style={{ color: "white" }}> Add</Text>
-        </EasyButton>
-        {/* {wishListOk === true ? (
-          <TouchableOpacity
+        </EasyButton> */}
+      
+          {/* <TouchableOpacity
             onPress={() => {
-              deleteWishlist();
+              removeFromWishlist();
             }}
           >
             <Ionicons name="heart" style={{ fontSize: 30, color: "red" }} />
-          </TouchableOpacity>
-        ) : (
+          </TouchableOpacity> */}
+        {/* ) : (
           <TouchableOpacity
             onPress={() => {
               addWishlist();
