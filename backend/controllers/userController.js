@@ -1,4 +1,5 @@
 const { User } = require('../models/user');
+const { Product } = require('../models/product');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -336,9 +337,9 @@ exports.getWish = async (req, res, next) => {
 
 exports.getUserWishlist = async (req, res, next) => {
   try {
-    const userId = req.user._id; // Assuming user ID is available in the request
+    //const userId = req.user._id; // Assuming user ID is available in the request
 
-    const user = await User.findById(userId).populate({
+    const user = await User.findById(req.params.id).populate({
       path: 'wishlist.product',
       model: 'Product', // Assuming your product model name is 'Product'
       select: 'name price images' // Specify fields you want to select from Product model

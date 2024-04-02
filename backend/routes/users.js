@@ -4,7 +4,7 @@ const userController = require('../controllers/userController');
 const { uploadOptions } = require('../utils/cloudinary');
 
 router.post('/wishlist/:id', userController.createWish);
-router.post('/wishlist', userController.getUserWishlist);
+router.get('/wishlist/:id', userController.getUserWishlist);
 router.get('/usersPerMonth', userController.getUsersPerMonth);
 router.get('/', userController.getUsers);
 router.get('/:id', userController.getUserById);

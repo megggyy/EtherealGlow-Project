@@ -20,6 +20,7 @@ import EasyButton from "../../Shared/StyledComponents/EasyButton";
 import AuthGlobal from "../../Context/Store/AuthGlobal";
 import { logoutUser } from "../../Context/Actions/Auth.actions";
 import OrderCard from "../../Shared/OrderCard";
+import ProductCard from "../../Screens/Product/ProductCard";
 
 var { width, height } = Dimensions.get("window");
 const UserProfile = (props) => {
@@ -27,7 +28,8 @@ const UserProfile = (props) => {
   const [userProfile, setUserProfile] = useState("");
   const [orders, setOrders] = useState([]);
   const navigation = useNavigation();
-  const [wishlist, setWishlist] = useState([]); // New state for user wishlist
+  const [wishlist, setWishlist] = useState([]); 
+
 
   useFocusEffect(
     useCallback(() => {
@@ -61,11 +63,21 @@ const UserProfile = (props) => {
           setOrders(userOrders);
         })
         .catch((error) => console.log(error));
-      axios
-        .get(`${baseURL}wishlist`) // Fetch user wishlist
-        .then((response) => setWishlist(response.data))
-        .catch((error) => console.log(error));
 
+        AsyncStorage.getItem("jwt")
+        .then((res) => {
+          axios
+            .get(`http://172.20.10.4:4000/api/v1/users/wishlist/${context.stateUser.user.userId}`, {
+              headers: { Authorization: `Bearer ${res}` },
+            })
+            .then((response) => {
+              console.log(response.data); // Log response data for debugging
+              setWishlist(response.data);
+            })
+        })
+      //  .catch((error) => console.log(error));
+        
+    
       return () => {
         setUserProfile();
         setOrders();
