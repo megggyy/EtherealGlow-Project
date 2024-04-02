@@ -77,13 +77,20 @@ const UserProfile = (props) => {
                     </Text>
                     <Text style={{ margin: 10 }}>
                         Phone: {userProfile ? userProfile.phone : ""}
-                    </Text>
+                    </Text>    
                 </View>
+                <EasyButton
+                    large
+                    registerbutton
+                    onPress={() => navigation.navigate("Update Profile")}
+                ><Text style={{ color: "white" }}>Edit Profile</Text>
+                </EasyButton>
                 <View style={{ marginTop: 80 }}>
                     <Button title={"Sign Out"} onPress={() => [
                         AsyncStorage.removeItem("jwt"),
                         logoutUser(context.dispatch)
                     ]} />
+            
                     <View style={styles.order}>
                         <Text style={{ fontSize: 20 }}>My Orders</Text>
                         <View>
@@ -108,7 +115,6 @@ const UserProfile = (props) => {
 
 const styles = StyleSheet.create({
     container: {
-        height: height,
         width: width,
         marginTop: 0,
         backgroundColor: "white",  

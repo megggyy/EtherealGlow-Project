@@ -10,6 +10,7 @@ import {
 import { addToCart } from '../../Redux/Actions/cartActions';
 import { useSelector, useDispatch } from 'react-redux';
 import Toast from 'react-native-toast-message';
+import EasyButton from "../../Shared/StyledComponents/EasyButton";
 var { width } = Dimensions.get("window");
 
 const ProductCard = (props) => {
@@ -44,9 +45,23 @@ const ProductCard = (props) => {
 
             {countInStock > 0 ? (
                 <View style={{ marginBottom: 60 }}>
-                    <Button
+                <EasyButton
+                    large
+                    registerbutton
+                    onPress={() => {
+                        dispatch(addToCart({ ...props, quantity: 1, })),
+                            Toast.show({
+                                topOffset: 60,
+                                type: "success",
+                                text1: `${name} added to Cart`,
+                                text2: "Go to your cart to complete order"
+                            })
+                    }}
+                ><Text style={{ color: "white" }}>Add to Cart</Text>
+                </EasyButton>
+                    {/* <Button
                         title={'Add'}
-                        color={'green'}
+                        color={'pink'}
                         onPress={() => {
                             dispatch(addToCart({ ...props, quantity: 1, })),
                                 Toast.show({
@@ -57,7 +72,7 @@ const ProductCard = (props) => {
                                 })
                         }}
                     >
-                    </Button>
+                    </Button> */}
                 </View>
             ) : <Text style={{ marginTop: 20 }}>Currently Unavailable</Text>}
         </View>
@@ -97,7 +112,7 @@ const styles = StyleSheet.create({
     },
     price: {
         fontSize: 20,
-        color: 'orange',
+        color: '#de0d5a',
         marginTop: 10
     }
 });

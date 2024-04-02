@@ -130,19 +130,21 @@ const ProductContainer = () => {
         
             <Center>
                 <VStack w="100%" space={5} alignSelf="center">
-                    <Input
-                        onFocus={openList}
-                        onChangeText={(text) => searchProduct(text)}
-                        placeholder="Search"
-                        variant="filled"
-                        width="100%"
-                        borderRadius="10"
-                        py="1"
-                        px="2"
-                        InputLeftElement={<Icon ml="2" size="4" color="gray.400" as={<Ionicons name="search" />} />}
-                        // InputRightElement={focus == true ? <SmallCloseIcon onPress={onBlur} /> : null}
-                        InputRightElement={focus === true ? <Icon ml="2" size="4" color="gray.400" as={<Ionicons name="close" size="12" color="black" onPress={onBlur} />} /> : null}
-                    />
+                <Input
+    onFocus={openList}
+    onChangeText={(text) => searchProduct(text)}
+    placeholder="Search"
+    variant="filled"
+    width="100%"
+    borderRadius="10"
+    py="1"
+    px="2"
+    style={{ backgroundColor: 'white', color: 'black' }} // Set background color to pink
+    InputLeftElement={<Icon ml="2" size="4" color="pink.900"  as={<Ionicons name="search" />} />}
+    InputRightElement={focus === true ? <Icon ml="2" size="4" color="pink.400" as={<Ionicons name="close" size="12" color="black" onPress={onBlur} />} /> : null}
+/>
+
+
                 </VStack>
                 {focus === true ? (
                     <SearchedProduct
@@ -202,7 +204,7 @@ const styles = StyleSheet.create({
         backgroundColor: "gainsboro",
     },
     listContainer: {
-        height: height,
+        height: 1500,
         width: width,
         flex: 1,
         flexDirection: "row",
