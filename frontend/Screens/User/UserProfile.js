@@ -71,8 +71,10 @@ const UserProfile = (props) => {
               headers: { Authorization: `Bearer ${res}` },
             })
             .then((response) => {
-              console.log(response.data); // Log response data for debugging
-              setWishlist(response.data);
+              // console.log(response.data); // Log response data for debugging
+              // setWishlist(response.data);
+              const wishlistArray = Object.values(response.data.wishlist); // Convert object to array
+              setWishlist(wishlistArray);
             })
         })
       //  .catch((error) => console.log(error));
