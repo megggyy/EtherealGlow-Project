@@ -51,7 +51,7 @@ const ProductCard = (props) => {
 const styles = StyleSheet.create({
     container: {
         width: width / 2 - 20,
-        height: width / 1.5,
+        height: width / 1.3,
         borderRadius: 10,
         overflow: 'hidden',
         marginTop: 10,
