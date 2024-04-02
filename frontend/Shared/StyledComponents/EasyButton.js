@@ -39,7 +39,7 @@ const EasyButton = styled.TouchableOpacity`
     ${(props) =>
         props.registerbutton &&
         css`
-            background: #ff0059;
+            background: #ff0059; 
         `
     }
 

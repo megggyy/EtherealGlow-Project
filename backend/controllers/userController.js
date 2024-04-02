@@ -66,6 +66,10 @@ exports.updateUser = async (req, res, next) => {
         } else {
             newPassword = userExist.passwordHash;
         }
+        // const file = req.file;
+        // const fileName = file.filename;
+        // if (!file) return res.status(400).send('No image in the request');
+        // const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
 
         const user = await User.findByIdAndUpdate(
             req.params.id,
@@ -75,6 +79,7 @@ exports.updateUser = async (req, res, next) => {
                 passwordHash: newPassword,
                 phone: req.body.phone,
                 isAdmin: req.body.isAdmin,
+               // image: `${basePath}${fileName}`,
                 street: req.body.street,
                 apartment: req.body.apartment,
                 zip: req.body.zip,
@@ -89,6 +94,7 @@ exports.updateUser = async (req, res, next) => {
         res.status(400).send(error.message);
     }
 };
+
 
 exports.loginUser = async (req, res, next) => {
     try {
