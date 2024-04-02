@@ -236,3 +236,124 @@ exports.getUsersPerMonth = async (req, res, next) => {
   };
 
 
+// Wishlist
+exports.createWish = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    const product = req.body.product;
+
+    if (!product) {
+      return res.status(400).json({ error: "Product is required" });
+    }
+
+    const productExistsInWishlist = user.wishlist.some(
+      (item) => item.product.toString() === product
+    );
+
+    if (productExistsInWishlist) {
+      return res
+        .status(400)
+        .json({ error: "Product already exists in wishlist" });
+    }
+
+    user.wishlist.push({ product /* : product._id, */ });
+    await user.save();
+
+    res
+      .status(200)
+      .json({ success: true, message: "Product added to wishlist" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: "Server Error" });
+  }
+};
+
+exports.deleteWish = async (req, res, next) => {
+  const productId = req.params.id;
+
+  const user = await User.findOneAndUpdate(
+    { _id: req.user.id },
+    { $pull: { wishlist: { _id: productId } } },
+    { new: true }
+  );
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "The Product has been removed from the wishlist",
+  });
+};
+
+exports.getWish = async (req, res, next) => {
+  try {
+    const productId = req.params.id;
+    const userId = req.user.id;
+
+    const user = await User.findOne({
+      _id: userId,
+      "wishlist.product": productId,
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const productInWishlist = user.wishlist.find(
+      (item) => item.product.toString() === productId
+    );
+
+    if (!productInWishlist) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found in wishlist",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      product: productInWishlist,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      error: error.message,
+      success: false,
+      message: "Wishlist not found",
+    });
+  }
+};
+
+exports.getUserWishlist = async (req, res, next) => {
+  try {
+    const userId = req.user._id; // Assuming user ID is available in the request
+
+    const user = await User.findById(userId).populate({
+      path: 'wishlist.product',
+      model: 'Product', // Assuming your product model name is 'Product'
+      select: 'name price images' // Specify fields you want to select from Product model
+    });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    const wishlist = user.wishlist.map(item => item.product._id); // Extracting product IDs from the wishlist
+
+    // Fetch all products based on the IDs from the wishlist
+    const products = await Product.find({ _id: wishlist });
+
+    res.status(200).json({ success: true, wishlist: products });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, error: 'Server Error' });
+  }
+};

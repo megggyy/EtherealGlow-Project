@@ -13,6 +13,15 @@ router.post('/register', uploadOptions.single('image'), userController.registerU
 router.delete('/:id', userController.deleteUser);
 router.get('/get/count', userController.getUserCount);
 
+// Wishlist
+router
+  .route('/wishlist')
+  .post(userController.createWish)
+  .get(userController.getUserWishlist);
+
+router.get('/wishlist/:id', userController.getWish);
+router.delete('/wishlist/:id', userController.deleteWish);
+
 
 module.exports = router;
 
