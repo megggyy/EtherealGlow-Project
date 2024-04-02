@@ -1,5 +1,4 @@
 import * as React from "react";
-
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
@@ -54,18 +53,11 @@ function CustomDrawerContent(props) {
   return (
     <DrawerContentScrollView {...props} safeArea>
       <VStack space="3" my="1" mx="1">
-        <Box px="4">
-          <Text bold color="gray.700">
-            Mail
-          </Text>
-          <Text fontSize="14" mt="1" color="gray.500" fontWeight="500">
-            john_doe@gmail.com
-          </Text>
-        </Box>
         <VStack divider={<Divider />} space="4">
           <VStack space="3">
             {props.state.routeNames.map((name, index) => (
               <Pressable
+                key={name}
                 px="5"
                 py="3"
                 rounded="md"
@@ -84,7 +76,16 @@ function CustomDrawerContent(props) {
                       index === props.state.index ? "primary.500" : "gray.500"
                     }
                     size="5"
-                    as={<MaterialCommunityIcons name={getIcon(name)} />}
+                    as={
+                      <MaterialCommunityIcons
+                        name={getIcon(name)}
+                        color={
+                          index === props.state.index
+                            ? "primary.500"
+                            : "gray.500"
+                        }
+                      />
+                    }
                   />
                   <Text
                     fontWeight="500"
@@ -98,53 +99,11 @@ function CustomDrawerContent(props) {
               </Pressable>
             ))}
           </VStack>
-          <VStack space="5">
-            <Text fontWeight="500" fontSize="14" px="5" color="gray.500">
-              Labels
-            </Text>
-            <VStack space="3">
-              <Pressable px="5" py="3">
-                <HStack space="7" alignItems="center">
-                  <Icon
-                    color="gray.500"
-                    size="5"
-                    as={<MaterialCommunityIcons name="bookmark" />}
-                  />
-                  <Text color="gray.700" fontWeight="500">
-                    Family
-                  </Text>
-                </HStack>
-              </Pressable>
-              <Pressable px="5" py="2">
-                <HStack space="7" alignItems="center">
-                  <Icon
-                    color="gray.500"
-                    size="5"
-                    as={<MaterialCommunityIcons name="bookmark" />}
-                  />
-                  <Text color="gray.700" fontWeight="500">
-                    Friends
-                  </Text>
-                </HStack>
-              </Pressable>
-              <Pressable px="5" py="3">
-                <HStack space="7" alignItems="center">
-                  <Icon
-                    color="gray.500"
-                    size="5"
-                    as={<MaterialCommunityIcons name="bookmark" />}
-                  />
-                  <Text fontWeight="500" color="gray.700">
-                    Work
-                  </Text>
-                </HStack>
-              </Pressable>
-            </VStack>
-          </VStack>
         </VStack>
       </VStack>
     </DrawerContentScrollView>
   );
+  
 }
 const DrawerNavigator = () => {
   return (
@@ -164,16 +123,10 @@ const DrawerNavigator = () => {
             },
           }}
         />
-        {/* <Drawer.Screen name="drawer" component={Main} /> */}
-        {/* <Drawer.Screen name="Products" component={ProductContainer}   />
-        <Drawer.Screen name="Login" component={Login}  />
-        <Drawer.Screen name="Cart" component={Cart} />
-        <Drawer.Screen name="Product List" component={Products} />  */}
         <Drawer.Screen
           name="Products"
           component={Main}
           initialParams={{ screen: "Products" }}
-          
         />
         <Drawer.Screen
           name="Login"

@@ -32,23 +32,18 @@ const Cart = () => {
             return 'https://cdn.pixabay.com/photo/2012/04/01/17/29/box-23649_960_720.png';
         };
         return (
-            <TouchableHighlight
-                _dark={{
-                    bg: 'coolGray.800'
-                }}
-                _light={{
-                    bg: 'white'
-                }}
-            >
-                <Box pl="4" pr="5" py="2" bg="white" keyExtractor={item => item.product}>
-                    <HStack alignItems="center" space={3}>
-                        <Avatar size="48px" source={{ uri: getFirstImage() }} />
-                        <VStack>
-                            <Text color="coolGray.800" _dark={{ color: 'warmGray.50' }} bold>
-                                {item.name}
-                            </Text>
-                        </VStack>
-                        <HStack space={2}>
+            <Box pl="4" pr="5" py="2" bg="white" keyExtractor={item => item.product}>
+                <HStack alignItems="center" space={3}>
+                    <Avatar size="48px" source={{ uri: getFirstImage() }} />
+                    <VStack flex={1} space={2}>
+                        <Text color="coolGray.800" _dark={{ color: 'warmGray.50' }} bold numberOfLines={1}>
+                            {item.name}
+                        </Text>
+                        <Text fontSize="xs" color="coolGray.800" _dark={{ color: 'warmGray.50' }} alignSelf="flex-end">
+                            $ {item.price * item.quantity}
+                        </Text>
+                    </VStack>
+                    <HStack space={2} alignItems="center">
                         <TouchableOpacity onPress={() => handleQuantityChange(dispatch, cartItems, item, 'decrease')}>
                             <Icon name="minus" size={20} />
                         </TouchableOpacity>
@@ -57,12 +52,8 @@ const Cart = () => {
                             <Icon name="plus" size={20} />
                         </TouchableOpacity>
                     </HStack>
-                    <Text fontSize="xs" color="coolGray.800" _dark={{ color: 'warmGray.50' }} alignSelf="flex-start">
-                        $ {item.price * item.quantity}
-                    </Text>
                 </HStack>
             </Box>
-        </TouchableHighlight>
         );
     };
 
@@ -97,9 +88,6 @@ const Cart = () => {
         }
     };
     
-    
-    
-
     const renderHiddenItem = (cartItems) =>
         <TouchableOpacity
             onPress={() => dispatch(removeFromCart(cartItems.item))}
@@ -114,45 +102,39 @@ const Cart = () => {
             </VStack>
 
         </TouchableOpacity>;
-    return (
-        <>
-            {cartItems.length > 0 ? (
-                <Box bg="white" safeArea flex="1" width="100%" >
-                    <SwipeListView
-                        data={cartItems}
-                        renderItem={renderItem}
-                        renderHiddenItem={renderHiddenItem}
-                        disableRightSwipe={true}
-                        leftOpenValue={75}
-                        rightOpenValue={-150}
-                        previewOpenValue={-100}
-                        previewOpenDelay={3000}
-                        keyExtractor={item => item._id.$oid}
-                    />
-                </Box>
-            ) : (
-                <Box style={styles.emptyContainer}>
-                    <Text >No items in cart
-                    </Text>
-                </Box>
-            )}
-            <VStack style={styles.bottomContainer} w='100%' justifyContent='space-between'
-            >
-                <HStack justifyContent="space-between">
-                    <Text style={styles.price}>$ {totalPrice.toFixed(2)}</Text>
-                </HStack>
-                <HStack justifyContent="space-between">
-                    {/* <Button alignItems="center" onPress={() => dispatch(clearCart())} >Clear</Button> */}
-                    <EasyButton
-                        danger
-                        medium
-                        alignItems="center"
-                        onPress={() => dispatch(clearCart())}
-                    >
-                        <Text style={{ color: 'white' }}>Clear</Text>
-                    </EasyButton>
-                </HStack>
-              
+  return (
+    <>
+        {cartItems.length > 0 ? (
+            <Box bg="white" safeArea flex="1" width="100%">
+                <SwipeListView
+                    data={cartItems}
+                    renderItem={renderItem}
+                    renderHiddenItem={renderHiddenItem}
+                    disableRightSwipe={true}
+                    leftOpenValue={75}
+                    rightOpenValue={-150}
+                    previewOpenValue={-100}
+                    previewOpenDelay={3000}
+                    keyExtractor={item => item._id.$oid}
+                />
+            </Box>
+        ) : (
+            <Box style={styles.emptyContainer}>
+                <Text>No items in cart</Text>
+            </Box>
+        )}
+        <VStack style={styles.bottomContainer} w='100%' justifyContent='space-between'>
+            <HStack justifyContent="space-between" style={styles.priceContainer}>
+                <Text style={styles.price}>Total: $ {totalPrice.toFixed(2)}</Text>
+            </HStack>
+            <HStack justifyContent="space-between" style={styles.buttonContainer}>
+                <EasyButton
+                    danger
+                    medium
+                    onPress={() => dispatch(clearCart())}
+                >
+                    <Text style={{ color: 'white' }}>Clear Cart</Text>
+                </EasyButton>
                 {context.stateUser.isAuthenticated ? (
                     <EasyButton
                         primary
@@ -170,44 +152,43 @@ const Cart = () => {
                         <Text style={{ color: 'white' }}>Login</Text>
                     </EasyButton>
                 )}
-            </VStack >
-        </>
-    )
-}
+            </HStack>
+        </VStack>
+    </>
+);
+};
 
 const styles = StyleSheet.create({
     emptyContainer: {
-        height: height,
+        flex: 1,
         alignItems: "center",
         justifyContent: "center",
     },
     bottomContainer: {
-        flexDirection: 'row',
         position: 'absolute',
         bottom: 0,
         left: 0,
+        width: '100%',
         backgroundColor: 'white',
-        elevation: 20
+        elevation: 20,
+        paddingHorizontal: 20,
+        paddingVertical: 15,
+    },
+    priceContainer: {
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+        paddingBottom: 10,
+        marginBottom: 10,
     },
     price: {
         fontSize: 18,
-        margin: 20,
         color: 'red'
     },
-    hiddenContainer: {
-        flex: 1,
-        justifyContent: 'flex-end',
+    buttonContainer: {
         flexDirection: 'row',
-        // width: 'lg'
+        justifyContent: 'space-between',
     },
-    hiddenButton: {
-        backgroundColor: 'red',
-        justifyContent: 'center',
-        alignItems: 'flex-end',
-        paddingRight: 25,
-        height: 70,
-        width: width / 1.2
-    }
 });
 
-export default Cart
+
+export default Cart;

@@ -1,23 +1,14 @@
 import React from 'react';
-import {
-    StyleSheet,
-    View,
-    Dimensions,
-    Image,
-    Text,
-    Button
-} from 'react-native';
+import { StyleSheet, View, Dimensions, Image, Text, TouchableOpacity } from 'react-native';
 import { addToCart } from '../../Redux/Actions/cartActions';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Toast from 'react-native-toast-message';
-import EasyButton from "../../Shared/StyledComponents/EasyButton";
 var { width } = Dimensions.get("window");
 
 const ProductCard = (props) => {
     const { name, price, image, countInStock } = props;
     const dispatch = useDispatch();
 
-    // Function to get the first image URL from the array
     const getFirstImage = () => {
         if (Array.isArray(image) && image.length > 0) {
             return image[0].url;
@@ -29,52 +20,30 @@ const ProductCard = (props) => {
         <View style={styles.container}>
             <Image
                 style={styles.image}
-                resizeMode="contain"
-                source={{
-                    uri: getFirstImage() 
-                }}
+                resizeMode="cover"
+                source={{ uri: getFirstImage() }}
             />
-            
-            <View style={styles.card} />
-            <Text style={styles.title}>
-                {(name.length && name.length > 15) ? name.substring(0, 15 - 3)
-                    + '...' : name
-                }
-            </Text>
-            <Text style={styles.price}>${price}</Text>
-
-            {countInStock > 0 ? (
-                <View style={{ marginBottom: 60 }}>
-                <EasyButton
-                    large
-                    registerbutton
+            <View style={styles.content}>
+                <Text style={styles.title}>
+                    {name.length > 15 ? name.substring(0, 15 - 3) + '...' : name}
+                </Text>
+                <Text style={styles.price}>${price}</Text>
+                <TouchableOpacity
+                    style={styles.addButton}
                     onPress={() => {
-                        dispatch(addToCart({ ...props, quantity: 1, })),
-                            Toast.show({
-                                topOffset: 60,
-                                type: "success",
-                                text1: `${name} added to Cart`,
-                                text2: "Go to your cart to complete order"
-                            })
+                        dispatch(addToCart({ ...props, quantity: 1 }));
+                        Toast.show({
+                            topOffset: 60,
+                            type: "success",
+                            text1: `${name} added to Cart`,
+                            text2: "Go to your cart to complete order"
+                        });
                     }}
-                ><Text style={{ color: "white" }}>Add to Cart</Text>
-                </EasyButton>
-                    {/* <Button
-                        title={'Add'}
-                        color={'pink'}
-                        onPress={() => {
-                            dispatch(addToCart({ ...props, quantity: 1, })),
-                                Toast.show({
-                                    topOffset: 60,
-                                    type: "success",
-                                    text1: `${name} added to Cart`,
-                                    text2: "Go to your cart to complete order"
-                                })
-                        }}
-                    >
-                    </Button> */}
-                </View>
-            ) : <Text style={{ marginTop: 20 }}>Currently Unavailable</Text>}
+                    disabled={countInStock === 0}
+                >
+                    <Text style={styles.buttonText}>{countInStock > 0 ? 'Add to Cart' : 'Out of Stock'}</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };
@@ -82,38 +51,52 @@ const ProductCard = (props) => {
 const styles = StyleSheet.create({
     container: {
         width: width / 2 - 20,
-        height: width / 1.7,
-        padding: 10,
+        height: width / 1.5,
         borderRadius: 10,
-        marginTop: 55,
-        marginBottom: 5,
+        overflow: 'hidden',
+        marginTop: 10,
+        marginBottom: 10,
         marginLeft: 10,
-        alignItems: 'center',
+        marginRight: 10,
         elevation: 8,
         backgroundColor: 'white'
     },
     image: {
-        width: width / 2 - 20 - 10,
-        height: width / 2 - 20 - 30,
-        backgroundColor: 'transparent',
-        position: 'absolute',
-        top: -45
+        width: '90%',
+        height: '55%',
+        marginTop: 5,
+        marginBottom: 5,
+        marginLeft: 10,
+        marginRight: 5,
+        borderRadius: 10,
     },
-    card: {
-        marginBottom: 10,
-        height: width / 2 - 20 - 90,
-        backgroundColor: 'transparent',
-        width: width / 2 - 20 - 10
+    content: {
+        padding: 10,
+        alignItems: 'center',
     },
     title: {
         fontWeight: "bold",
-        fontSize: 14,
-        textAlign: 'center'
+        fontSize: 16,
+        textAlign: 'center',
+        marginBottom: 5,
     },
     price: {
-        fontSize: 20,
-        color: '#de0d5a',
-        marginTop: 10
+        fontSize: 16,
+        color: '#AA336A',
+        marginBottom: 10,
+    },
+    addButton: {
+        backgroundColor: 'pink',
+        borderColor: 'black',
+        borderRadius: 5,
+        paddingVertical: 8,
+        paddingHorizontal: 15,
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16,
     }
 });
 

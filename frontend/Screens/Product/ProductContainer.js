@@ -136,12 +136,13 @@ const ProductContainer = () => {
     placeholder="Search"
     variant="filled"
     width="100%"
+    height="10"
     borderRadius="10"
     py="1"
     px="2"
     style={{ backgroundColor: 'white', color: 'black' }} // Set background color to pink
     InputLeftElement={<Icon ml="2" size="4" color="pink.900"  as={<Ionicons name="search" />} />}
-    InputRightElement={focus === true ? <Icon ml="2" size="4" color="pink.400" as={<Ionicons name="close" size="12" color="black" onPress={onBlur} />} /> : null}
+    InputRightElement={focus === true ? <Icon ml="2" size="4" color="pink.400" as={<Ionicons name="close" size="20" color="black" onPress={onBlur} />} /> : null}
 />
 
 
