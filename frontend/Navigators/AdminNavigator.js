@@ -16,20 +16,15 @@ const AdminNavigator= () => {
     
     return (
         <Stack.Navigator>
-            <Stack.Screen 
-                name="Products"
-                component={Products}
-                options={{
-                    title: "Products"
-                }}
-            />
+             <Stack.Screen name="Dashboard" component={UserChart} />
+            <Stack.Screen name="Products" component={Products} />
             <Stack.Screen name="Categories" component={Categories} />
             <Stack.Screen name="Orders" component={Orders} />
             <Stack.Screen name="Users" component={Users} />
             <Stack.Screen name="ProductForm" component={ProductForm} />
             <Stack.Screen name="CategoryForm" component={CategoryForm} />
             <Stack.Screen name="CategoryEdit" component={CategoryEdit} />
-            <Stack.Screen name="UserChart" component={UserChart} />
+           
         </Stack.Navigator>
     )
 }

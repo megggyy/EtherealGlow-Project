@@ -121,40 +121,6 @@ const Users = (props) => {
     )
     return (
         <Box flex={1}>
-            <View style={styles.buttonContainer}>
-                <EasyButton
-                    secondary
-                    medium
-                    onPress={() => navigation.navigate("Orders")}
-                >
-                    <Icon name="shopping-bag" size={18} color="white" />
-                    <Text style={styles.buttonText}>Orders</Text>
-                </EasyButton>
-                <EasyButton
-                    secondary
-                    medium
-                    onPress={() => navigation.navigate("ProductForm")}
-                >
-                    <Icon name="plus" size={18} color="white" />
-                    <Text style={styles.buttonText}>Products</Text>
-                </EasyButton>
-                <EasyButton
-                    secondary
-                    medium
-                    onPress={() => navigation.navigate("Categories")}
-                >
-                    <Icon name="plus" size={18} color="white" />
-                    <Text style={styles.buttonText}>Categories</Text>
-                </EasyButton>
-                <EasyButton
-                    secondary
-                    medium
-                    onPress={() => navigation.navigate("UserChart")}
-                >
-                    <Icon name="shopping-bag" size={18} color="white" />
-                    <Text style={styles.buttonText}>User Chart</Text>
-                </EasyButton>
-            </View>
             <Searchbar width="80%"
                 placeholder="Search"
                 onChangeText={(text) => searchUser(text)}

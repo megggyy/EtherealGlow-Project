@@ -43,6 +43,13 @@ const EasyButton = styled.TouchableOpacity`
         `
     }
 
+    ${(props) =>
+        props.adminButton &&
+        css`
+            background: #ffb0c4;
+        `
+    }
+
     ${(props) => 
         props.large &&
         css`
